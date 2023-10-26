@@ -1,0 +1,5 @@
+1. left side button should be right aligned, not by marginRight or marginLeft
+2. Review send button go beyond screen when large comment typed.
+3.
+
+01326283041
