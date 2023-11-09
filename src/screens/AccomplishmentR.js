@@ -323,7 +323,7 @@ return (
         <View style={styles.row}>
           <Text style={styles.leftpart}>Social Work</Text>
           <Text style={styles.inner_amounts}>
-            {p.socialWork } | {s.socialWork}
+            {float2time(p.socialWork)} | {float2time(s.socialWork)}
           </Text>
           <View style={styles.right_amounts}>
             <Text>
@@ -336,7 +336,7 @@ return (
         <View style={styles.row}>
           <Text style={styles.leftpart}>Org. Time</Text>
           <Text style={styles.inner_amounts}>
-          {p.orgTime } | {s.orgTime}
+          {float2time(p.orgTime)} | {float2time(s.orgTime)}
           </Text>
           <View style={styles.right_amounts}>
             <Text>
@@ -349,7 +349,7 @@ return (
         <View style={styles.row}>
           <Text style={styles.leftpart}>Physical Exercise</Text>
           <Text style={styles.inner_amounts}>
-          {p.physicalExercise } | {s.physicalExercise}
+          {float2time(p.physicalExercise)} | {float2time(s.physicalExercise)}
           </Text>
           <View style={styles.right_amounts}>
             <Text>

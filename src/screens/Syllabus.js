@@ -85,7 +85,8 @@ const Syllabus = () => {
   const updateBookData = () => {
     const data = {
       user,
-      bookRead
+      bookRead,
+      userLogout: 1
     };
 
     API.updateUser(user, data, token)

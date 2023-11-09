@@ -49,13 +49,13 @@ const AppStack = ({navigation}) => {
         <Drawer.Screen name="Reviewee" options={{ drawerIcon:()=>(<FontAwesome5 name="comment" size={18} color="#489fff" />)}} component={Reviewee} />
         <Drawer.Screen name="Account" options={{ drawerIcon:()=>(<FontAwesome5 name="user" size={18} color="#489fff" />)}} component={Account} />
         <Drawer.Screen name="Contact Us" options={{ drawerIcon:()=>(<FontAwesome5 name="address-card" size={14} color="#489fff" />)}} component={Contactus} />
-        {/* 
-        <Drawer.Screen name="Aboutus" options={{ drawerIcon:()=>(<FontAwesome5 name="address-book" size={18} color="#489fff" />)}} component={Aboutus} />
-        */}
+        
+        <Drawer.Screen name="About Us" options={{ drawerIcon:()=>(<FontAwesome5 name="address-book" size={18} color="#489fff" />)}} component={Aboutus} />
+        
         {/*<Drawer.Screen name="Settings" options={{ drawerIcon:()=>(<FontAwesome5 name="cog" size={14} color="#489fff" />)}} component={Settings} /> */}
         <Drawer.Screen name="Notifications" options={{ drawerIcon:()=>(<Icon name="bell" size={14} color='#489fff'/>)}} component={Notification} />
         <Drawer.Screen name=" Change Password" options={{ drawerIcon:()=>(<Icon name="lock" size={14} color='#489fff'/>)}} component={ChangePassword} />
-        <Drawer.Screen name="PrivacyPolicy" options={{ drawerIcon:()=>(<FontAwesome5 name="address-book" size={18} color="#489fff" />)}} component={PrivacyPolicy } />
+        <Drawer.Screen name="Privacy Policy" options={{ drawerIcon:()=>(<FontAwesome5 name="address-book" size={18} color="#489fff" />)}} component={PrivacyPolicy } />
         
       </Drawer.Navigator>
       

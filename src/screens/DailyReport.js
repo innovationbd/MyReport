@@ -215,6 +215,7 @@ const DailyReport = () => {
       //console.log(ret.loggedin);
       setToken(ret.token);
       setUser(ret.userid);
+      console.log(ret.token);
     });   
   }, []);
 

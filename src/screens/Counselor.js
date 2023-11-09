@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     marginLeft:2,
     marginRight:2,
     marginBottom:20,
-    height:210
+    height:290
   },
   upperPartRow:{
     flexDirection:'row',

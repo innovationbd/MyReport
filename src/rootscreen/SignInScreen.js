@@ -11,11 +11,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from "react-native-animatable";
 import logo from "../../assets/appLogo.png";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { Linking } from 'react-native';
+import { Linking, Alert } from 'react-native';
 import { API } from '../../api-service';
 import storage from '../../storage';
 import { NavigationContainer } from "@react-navigation/native";
 import AppStack from "../navigation/AppStack";
+import * as Updates from 'expo-updates';
 
 //import { TextInput } from "react-native-gesture-handler";
 
@@ -30,6 +31,10 @@ const SignInScreen = ({navigation}) => {
       navigation.navigate('AppStack', {name: 'AppStack'});
     }
   }, [userToken]);
+
+  const showPolicy = () => {
+    navigation.navigate('PrivacyPolicy', {name: 'PrivacyPolicy'});
+  }
 
   const userLogin = () => {
     //console.log('hello');
@@ -46,27 +51,51 @@ const SignInScreen = ({navigation}) => {
 
       
 
-
-      var userA = {
-        username: res.user_name,
-        userid: res.user_id,
-        token: res.token,
-        loggedin: res.user_id ? 1 : 0
-      };
+      if(res.token) {
+        var userA = {
+          username: res.user_name,
+          userid: res.user_id,
+          token: res.token,
+          loggedin: res.user_id ? 1 : 0
+        };
+  
+        var authdata = {
+          username,
+          password,
+        }
+        
+        storage.save({
+          key: 'user', // Note: Do not use underscore("_") in key!
+          id: '1001', // Note: Do not use underscore("_") in id!
+          data: userA,
+          expires: 1000 * 3600 * 24
+        });
+  
+        setUserToken(res.token);
+        Updates.reloadAsync();
+      }
+      else {
+        Alert.alert('Login Failed!', 'Username or Password incorrect!', [
+          {text: 'DISMISS'},
+        ]);
+      }
       
-      storage.save({
-        key: 'user', // Note: Do not use underscore("_") in key!
-        id: '1001', // Note: Do not use underscore("_") in id!
-        data: userA,
-        expires: 1000 * 3600 * 24
-      });
-
-      setUserToken(res.token);
-
       
     })
     .catch(error => {
         console.log(error);
+        /*if(API.connectionError(error.toString())) {
+          Alert.alert('Login Failed!', 'Server Error! Please try again later.', [
+            {text: 'DISMISS'},
+          ]);
+        } else {
+          Alert.alert('Login Failed!', 'Please try again later.', [
+            {text: 'DISMISS'},
+          ]);
+        }*/
+        Alert.alert('Login Failed!', 'Connectivity Problem', [
+          {text: 'DISMISS'},
+        ]);
     });
 
     storage.load({
@@ -173,6 +202,10 @@ const SignInScreen = ({navigation}) => {
                   }} 
                   style={{ color: "red", fontWeight: "bold", }}>
                   Forgot Password?
+              </Text>
+              <Text onPress={showPolicy} 
+                  style={{ color: "green", fontWeight: "bold", }}>
+                  Privacy Policy
               </Text>
           </View>
         </Animatable.View>

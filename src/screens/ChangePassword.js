@@ -8,7 +8,7 @@ import config from "../../config";
 import { API } from "../../api-service";
 
 
-const changePassword = () =>{
+const ChangePassword = () =>{
     const [user, setUser] = useState();
     const [status, setStatus] = useState(undefined); // For message
     const [old_password, setOldPass] = useState("");
@@ -153,7 +153,7 @@ const changePassword = () =>{
     )
 }
 
-export default changePassword;
+export default ChangePassword;
 
 const styles = StyleSheet.create({
     container: {

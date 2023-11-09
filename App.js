@@ -31,6 +31,7 @@ import Counselor from "./src/screens/Counselor";
 import Reviewee from "./src/screens/Reviewee";
 import AccomplishmentR from "./src/screens/AccomplishmentR";
 import Dashboard from "./src/screens/Dashboard";
+import PrivacyPolicy from "./src/screens/PrivacyPolicy";
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -51,7 +52,6 @@ function App() {
   }
 
   const Stack = createNativeStackNavigator();
-  //new test collaborator
 
   return (
     <NavigationContainer>
@@ -73,7 +73,6 @@ function App() {
           options={{title: 'My Report', headerShown: false}}
         />
         <Stack.Screen name="SignInScreen" component={SignInScreen} options={{headerShown: false}} />
-        <Stack.Screen name="Dashboard" component={Dashboard} options={{title: 'Dashboard'}}/>
         <Stack.Screen name="DailyReport" component={DailyReport} options={{title: 'Daily Report'}}/>
         <Stack.Screen name="MonthlySummary" component={MonthlySummary} options={{title: 'Monthly Summary'}}/>
         <Stack.Screen name="MonthlyPlan" component={MonthlyPlan} options={{title: 'Monthly Plan'}}/>
@@ -82,6 +81,8 @@ function App() {
         <Stack.Screen name="Syllabus" component={Syllabus} options={{title: 'Syllabus'}}/>
         <Stack.Screen name="Counselor" component={Counselor} options={{title: 'Counselor'}}/>
         <Stack.Screen name="Reviewee" component={Reviewee} options={{title: 'Reviewee'}}/>
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{title: 'PrivacyPolicy'}}/>
+        <Stack.Screen name="Home" component={Dashboard} options={{title: 'Home'}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

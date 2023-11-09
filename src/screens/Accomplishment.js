@@ -321,7 +321,7 @@ return (
         <View style={styles.row}>
           <Text style={styles.leftpart}>Social Work</Text>
           <Text style={styles.inner_amounts}>
-            {p.socialWork } | {s.socialWork}
+            {float2time(p.socialWork)} | {float2time(s.socialWork)}
           </Text>
           <View style={styles.right_amounts}>
             <Text>
@@ -334,7 +334,7 @@ return (
         <View style={styles.row}>
           <Text style={styles.leftpart}>Org. Time</Text>
           <Text style={styles.inner_amounts}>
-          {p.orgTime } | {s.orgTime}
+          {float2time(p.orgTime)} | {float2time(s.orgTime)}
           </Text>
           <View style={styles.right_amounts}>
             <Text>
@@ -347,7 +347,7 @@ return (
         <View style={styles.row}>
           <Text style={styles.leftpart}>Physical Exercise</Text>
           <Text style={styles.inner_amounts}>
-          {p.physicalExercise } | {s.physicalExercise}
+          {float2time(p.physicalExercise)} | {float2time(s.physicalExercise)}
           </Text>
           <View style={styles.right_amounts}>
             <Text>
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     height:20,
   },
   leftpart:{
-    flex:2,
+    flex:2.6,
     width:150,
     height:rowH,
     fontSize:10,
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   leftpart1:{
-    flex:2,
+    flex:2.6,
     width:150,
     height:rowH,
     fontSize:10,
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   leftpart2:{
-    flex:2,
+    flex:2.6,
     width:150,
     height:rowH,
     fontSize:10,
@@ -542,13 +542,15 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   inner_amounts:{
-    flex:2,
+    flex:2.6,
+    width:100,
     height:rowH,
     padding:10,
     backgroundColor:'white',
     textAlign:'center',
     textAlignVertical:'center',
-    borderWidth:0
+    borderWidth:0,
+    marginRight:2
   },
   right_amounts:{
     flex:1.2,
@@ -556,12 +558,11 @@ const styles = StyleSheet.create({
     height:rowH,
     paddingRight:10,
     paddingTop:5,
+    paddingLeft:2,
     backgroundColor:'white',
     textAlign:'center',
     textAlignVertical:'center',
-    borderWidth:0,
-    marginLeft:2,
-    marginRight:10,
+    borderWidth:0
   },
   right_amounts1:{
     flex:1.2,
@@ -569,13 +570,12 @@ const styles = StyleSheet.create({
     height:rowH,
     paddingRight:10,
     paddingTop:5,
+    paddingLeft:2,
     backgroundColor:'white',
     textAlign:'center',
     borderTopRightRadius:15,
     textAlignVertical:'center',
-    borderWidth:0,
-    marginLeft:2,
-    marginRight:10,
+    borderWidth:0
   },
   right_amounts2:{
     flex:1.2,
@@ -587,9 +587,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
     borderBottomRightRadius:15,
     textAlignVertical:'center',
-    borderWidth:0,
-    marginLeft:2,
-    marginRight:10,
+    borderWidth:0
   },
   button3:{
     flex:1,
@@ -640,18 +638,18 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     height:30,
     borderColor:'white',
-    borderRadius:0,
+    borderRadius:0
   },
   select_month1:{
     alignSelf:'center',
     height:30,
     borderColor:'white',
     borderRadius:20,
-    marginRight:20,
+    marginLeft:20
   },
   prevdate:{
     height:50,
-    width:20,
+    width:40,
     paddingBottom:7,
     backgroundColor:'#79c52c',
     textAlign:'center',
@@ -663,7 +661,7 @@ const styles = StyleSheet.create({
   },
   nextdate:{
     height:50,
-    width:20,
+    width:40,
     paddingBottom:7,
     backgroundColor:'#79c52c',
     textAlign:'center',
@@ -671,8 +669,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius:20,
     marginBottom: 10,
     fontSize: 30,
-    color: 'white',
-    marginRight:20,
+    color: 'white'
   },
   
   
