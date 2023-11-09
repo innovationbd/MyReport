@@ -7,4 +7,7 @@ export default {
   apiUrlLogin: "https://reporting.smsamfund.se/HvOakN1AD9c2Stp/login/",
   apiUrlChangepass:
     "https://reporting.smsamfund.se/HvOakN1AD9c2Stp/changepass/",
+
+  hostingError: "Unexpected character: <",
+  networkError: "Networking has been disabled",
 };
