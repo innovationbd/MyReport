@@ -2,6 +2,7 @@ import config from "./config";
 //const TOKEN = "9bc7e072e3d4389efa57c874a528a50bfa562599";
 
 export class API {
+
     static loginAuth(body) {
         return fetch(`${config.apiUrlLogin}`, {
             method: 'POST',
@@ -211,6 +212,11 @@ export class API {
         }
         }).then( resp => resp.json() )
     }
+
+    static connectionError(resp) {
+        return resp.includes(config.hostingError);
+    }
+    
 
     /*static loginUser(body) {
         return fetch(`http://127.0.0.1:8000/auth/`, {

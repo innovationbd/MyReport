@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
-import { Button,StyleSheet,View,Text,ScrollView } from 'react-native';
+import { Button,StyleSheet,View,Text,ScrollView,Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import CheckBox from 'expo-checkbox';
 import { useEffect } from 'react';
 import storage from '../../storage';
 import { API } from '../../api-service';
+import * as Updates from 'expo-updates';
+//import { Alert } from 'react-bootstrap';
 
 
 
@@ -45,6 +47,7 @@ const Account = () => {
       //console.log(ret.loggedin);
       setToken(ret.token);
       setUser(ret.userid);
+      console.log(ret.token);
     });   
   }, []);
 
@@ -100,16 +103,17 @@ const Account = () => {
       user, 
       firstName,
       lastName,
-      phone 
+      phone,
+      userLogout: 1
     };
     API.updateUser(user, data, token)
     .then( resp => {
       console.log(resp);
         if(resp.user == user) {
             Alert.alert('Updated', 'User Info Updated!', [
-              {text: 'OK'},
+              {text: 'OK', onPress: () => Updates.reloadAsync()},
             ]);
-            setUpdate(!update);
+            //setUpdate(!update);
         }
         else {
           Alert.alert('Error', 'User Info not Updated!', [
@@ -144,6 +148,7 @@ const Account = () => {
       <View style={styles.row}>
       <Text style={styles.leftpart1}>First Name</Text>
       <TextInput 
+        inputStyle={{color: 'blue'}}
         placeholder='First Name'
         style={styles.button5}
         onChangeText = {(text)=> setFirstName(text)}
@@ -155,6 +160,7 @@ const Account = () => {
       <Text style={styles.leftpart}>Last Name</Text>
       <TextInput 
         placeholder='Last Name'
+        inputStyle={{color: 'blue'}}
         style={styles.button4}
         onChangeText = {(text)=> setLastName(text)}
         value={lastName}
@@ -283,6 +289,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center',
     borderWidth:1,
     borderColor:'#0095ff',
+    color:'grey'
   },
   button5:{
     flex:2,
@@ -293,7 +300,8 @@ const styles = StyleSheet.create({
     textAlignVertical:'center',
     borderWidth:1,
     borderColor:'#0095ff',
-    borderTopRightRadius:20
+    borderTopRightRadius:20,
+    color:'black',
   },
   button6:{
     flex:2,
@@ -304,7 +312,8 @@ const styles = StyleSheet.create({
     textAlignVertical:'center',
     borderWidth:1,
     borderColor:'#0095ff',
-    borderBottomRightRadius:20
+    borderBottomRightRadius:20,
+    color:'grey'
   },
   footer:{
     flexDirection: 'row',

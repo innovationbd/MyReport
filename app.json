@@ -18,22 +18,21 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.reporting.smsamfund.se.MyReport"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.reportappbaki.AndroidAppReport"
+      "package": "com.marufbuet0906.AndroidAppReport"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "358f0f97-b508-40e3-864a-56eb51696f37"
+        "projectId": "b9d2974b-3a96-44f4-ae1d-7ebe99554e42"
       }
     }
   }
