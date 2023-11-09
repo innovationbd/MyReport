@@ -365,11 +365,14 @@ const Reviewee = (props) => {
             </View>
             <Text style={styles.reviewee_info1}>{reviewee && currentAdvice ? truncateAdvice(currentAdvice.advice) : 'No Comment'}</Text>
             {
-              currentAdvice.advice ? (
-                currentAdvice.advice.length >= maxAdviceLength ? (
-                <Text style={styles.seeMore} onPress={seeLargeAdvice}>... See more</Text>
+              currentAdvice ? (
+                currentAdvice.advice ? (
+                  currentAdvice.advice.length >= maxAdviceLength ? (
+                  <Text style={styles.seeMore} onPress={seeLargeAdvice}>... See more</Text>
+                ) : ('')
+                ) : ('')
               ) : ('')
-              ) : ('')
+              
             }
             {/*<Text style={styles.reviewee_info2}>Associate, Since 2021</Text>*/}
           </View>
@@ -634,6 +637,7 @@ const styles = StyleSheet.create({
     fontSize:20,
     color:'black',
     paddingLeft: 3,
+    paddingTop:5,
     marginBottom: 15
   },
   reviewee_info2:{

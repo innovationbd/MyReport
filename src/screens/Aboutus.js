@@ -6,7 +6,7 @@ const Aboutus = (props) => {
   const url = "https://smsamfund.se/about-sms/";
   useEffect(() => {
     Linking.openURL(url);
-    props.navigation.navigate('Dashboard', {name: 'Dashboard'});
+    props.navigation.navigate('Home', {name: 'Dashboard'});
   }, []);
 
   return (

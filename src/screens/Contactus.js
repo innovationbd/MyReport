@@ -67,6 +67,10 @@ const sendDataToApi= ()=>{
     },
     {text: 'OK'},
   ]);
+  setName('');
+  setPhone(null);
+  setEmail('');
+  setMessage('');
   //e.target.reset();
   })
   .catch((error) => {
@@ -243,6 +247,7 @@ const styles = StyleSheet.create({
     marginBottom:10,
     backgroundColor:'white',
     borderWidth:0.5,
+    paddingLeft:5,
   },
   lowerBoxLastTextInput:{
     flex:1,
@@ -253,6 +258,7 @@ const styles = StyleSheet.create({
     marginBottom:10,
     backgroundColor:'white',
     borderWidth:0.5,
+    paddingLeft:5,
   },
   upperBoxRow1:{
     flex:1,

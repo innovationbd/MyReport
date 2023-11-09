@@ -555,16 +555,15 @@ const sbbutton = () => {
         
           
           
-          
-        
-          
-          
-        </ScrollView>
-        <Button
+          <Button
             title={planid == 0 ? "ADD PLAN" : "UPDATE PLAN"}
             color="#0070bb"
             onPress={sbbutton}
           />
+        
+          
+          
+        </ScrollView>
     </LinearGradient>
   );
 };
@@ -602,12 +601,12 @@ const styles = StyleSheet.create({
   button:{
     flex: 1,
     height: 40,
-    marginRight:30,
+    width: 100,
   },
   button1:{
     flex: 1,
     height: 40,
-    marginRight:30,
+    width: 100,
     borderTopRightRadius:15,
   },
   button3:{
@@ -626,7 +625,7 @@ const styles = StyleSheet.create({
     padding:10,
   },
   leftpart:{
-    flex:1,
+    width:150,
     height:40,
     marginRight:10,
     marginLeft:2,
@@ -637,7 +636,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   leftpart1:{
-    flex:1,
+    width:150,
     height:40,
     marginRight:10,
     marginLeft:2,
@@ -691,10 +690,11 @@ const styles = StyleSheet.create({
     height:30,
     borderColor:'white',
     borderRadius:20,
+    marginLeft:20
   },
   prevdate:{
     height:50,
-    width:20,
+    width:40,
     paddingBottom:7,
     backgroundColor:'#79c52c',
     textAlign:'center',
@@ -706,8 +706,7 @@ const styles = StyleSheet.create({
   },
   nextdate:{
     height:50,
-    width:20,
-    marginRight:10,
+    width:40,
     paddingBottom:7,
     backgroundColor:'#79c52c',
     textAlign:'center',
