@@ -5,11 +5,13 @@ npm install @react-native-async-storage/async-storage
 
 npm i react-native-progress
 
-npm install moment --save 
+npm install moment --save as something
 
 npm i react-native-select-dropdown   //for reviewee dropdown
 
 npm install @rneui/themed  //for social icon
+
+new installation
 
 
 
