@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from "react-native-animatable";
 import logo from "../../assets/appLogo.png";
+import loading from "../../assets/loading.gif";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { Linking, Alert } from 'react-native';
 import { API } from '../../api-service';
@@ -24,7 +25,10 @@ const SignInScreen = ({navigation}) => {
 
   const [username, setUserId] = useState("");
   const [password, setPassword] = useState("");
-  const [userToken, setUserToken] = React.useState(null);
+  const [userToken, setUserToken] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 10; //if 10 second waiting time, then net problem
 
   useEffect(() => {
     if(userToken!=null) {
@@ -36,8 +40,28 @@ const SignInScreen = ({navigation}) => {
     navigation.navigate('PrivacyPolicy', {name: 'PrivacyPolicy'});
   }
 
+  setTimeout(() => {
+    if(processing) {
+      setProcessingCount(processingCount+1);
+    } else {
+      setProcessingCount(0);
+    }
+
+    if(processingCount > maxProcessingTime) {
+      setProcessing(false);
+      connectivityProblem();
+    }
+  }, 1000);
+
+  const connectivityProblem = () => {
+    Alert.alert('Login Failed!', 'Network Error! Please check your network connectiona and Try Again.', [
+      {text: 'DISMISS', onPress: () => setProcessing(false)},
+    ]);
+  }
+
   const userLogin = () => {
     //console.log('hello');
+    setProcessing(true);
     const data = {
       username,
       password,
@@ -72,7 +96,7 @@ const SignInScreen = ({navigation}) => {
       }
       else {
         Alert.alert('Login Failed!', 'Username or Password incorrect!', [
-          {text: 'DISMISS'},
+          {text: 'DISMISS', onPress: () => setProcessing(false)},
         ]);
       }
       
@@ -89,9 +113,7 @@ const SignInScreen = ({navigation}) => {
             {text: 'DISMISS'},
           ]);
         }*/
-        Alert.alert('Login Failed!', 'Connectivity Problem', [
-          {text: 'DISMISS'},
-        ]);
+        userToken==null ? connectivityProblem() : '';
     });
 
     storage.load({
@@ -101,6 +123,7 @@ const SignInScreen = ({navigation}) => {
     .then(ret => {
       // found data goes to then()
       //console.log(ret.loggedin);
+      //setProcessing(false);
     })
     .catch(err => {
       // any exception including data not found
@@ -115,6 +138,7 @@ const SignInScreen = ({navigation}) => {
           // TODO
           break;
       }
+      //setProcessing(false);
     });
 
     //console.log(username);
@@ -182,17 +206,30 @@ const SignInScreen = ({navigation}) => {
             </View>
           </View>
           <View style={{alignItems:"center"}} >
-          <TouchableOpacity onPress={userLogin}>
-            <LinearGradient
-                
-                colors={["#08d4c4", "#01ab9d"]}
-                style={styles.getstart}
-              >
-                <Text onPress={userLogin} style={{ color: "white", fontWeight: "bold", }}>
-                  Login <FontAwesome5 name="angle-right" size={13} color="white" />
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+          {
+              processing ? (
+                <Animatable.Image
+                  animation="fadeInDown"
+                  source={loading}
+                  style={{ width: 80, height: 60 }}
+                  resizeMode="stretch"
+                />
+              ) : (
+                <TouchableOpacity onPress={userLogin}>
+                  <LinearGradient
+                    colors={["#08d4c4", "#01ab9d"]}
+                    style={styles.getstart}
+                  >
+                    <Text onPress={userLogin} style={{ color: "white", fontWeight: "bold", }}>
+                      Login <FontAwesome5 name="angle-right" size={13} color="white" />
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )
+            }
+          
+            
+            
             <Text onPress={() => {
                     Linking.openURL('https://reporting.smsamfund.se/HvOakN1AD9c2Stp/accounts/password_reset/')
                   }} 

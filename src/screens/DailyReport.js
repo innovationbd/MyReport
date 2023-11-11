@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Button,StyleSheet,View,Text,SafeAreaView,Alert } from 'react-native';
+import { Button,StyleSheet,View,Text,SafeAreaView,Alert, Modal } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import CheckBox from 'expo-checkbox';
@@ -8,6 +8,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import storage from '../../storage';
 import { API } from '../../api-service';
 import moment from 'moment/moment';
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 //import Swal from 'sweetalert2';
 
   
@@ -54,6 +56,12 @@ const DailyReport = () => {
   const [physicalExerciseTP, setPhysicalExerciseTP] = useState(false);
   const [reportlength, setP] = useState(100);
   const hm="";
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 10; //if 10 second waiting time, then network problem
 
   const getReport = () => {
     setGotVal(false);
@@ -124,6 +132,52 @@ const DailyReport = () => {
       } 
     }, 500);
 
+    useEffect(() => {
+      if(allreports.length > 0) {
+        setLoading(false);
+      } 
+    }, [allreports]);
+
+    setTimeout(() => {
+      if(loadingCount <= maxProcessingTime && processingCount <= maxProcessingTime) {
+        if(processing) {
+          setProcessingCount(processingCount+1);
+        } else {
+          setProcessingCount(0);
+        }
+
+        if(loading) {
+          setLoadingCount(loadingCount+1);
+        } else {
+          setLoadingCount(0);
+        }
+      }
+    }, 1000);
+
+    useEffect(() => {
+      if(loadingCount > maxProcessingTime) {
+        setLoadingCount(0);
+        setLoading(false);
+        connectivityProblem();
+      }
+    }, [loadingCount]);
+
+    useEffect(() => {
+      if(processingCount > maxProcessingTime) {
+        setProcessingCount(0);
+        setProcessing(false);
+        connectivityProblem();
+      }
+    }, [processingCount]);
+
+    const connectivityProblem = () => {
+      Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+        {text: 'DISMISS', onPress: () => {
+          setProcessing(false);
+          setLoading(false);
+        }},
+      ]);
+    }
 
   useEffect(() => {
       getReport();
@@ -230,6 +284,8 @@ const DailyReport = () => {
     ]);
 
     const sbbutton = () => {
+      setProcessing(true);
+
       const data = {
           user,
           date,
@@ -253,9 +309,10 @@ const DailyReport = () => {
         if(reportid == 0) {
             API.createReport(data, token)
             .then( resp => {
+                setProcessing(false);
                 console.log(resp);
                 if(resp.user == user) {
-                  Alert.alert('Alert Title', 'Adding Report Succesfull.', [
+                  Alert.alert('Saved', 'Report added Succesfully.', [
                     {
                       text: 'Cancel',
                       //onPress: () => console.log('Cancel Pressed'),
@@ -267,7 +324,7 @@ const DailyReport = () => {
                     setGotreport(!gotreport);
                 }
                 else {
-                  Alert.alert('Alert Title', 'Report Not Added', [
+                  Alert.alert('Failed', 'Report Not Added', [
                     {
                       text: 'Cancel',
                       onPress: () => console.log('Cancel Pressed'),
@@ -279,9 +336,10 @@ const DailyReport = () => {
                 }
             })
             .catch(error => {
+                setProcessing(false);
                 //console.log(error);
                 //Alert.alert("Error", "Report Not Added", "warning");
-                Alert.alert('Alert Title', 'Report Not Added', [
+                Alert.alert('Error', 'Report Not Added', [
                   {
                     text: 'Cancel',
                     onPress: () => console.log('Cancel Pressed'),
@@ -294,6 +352,7 @@ const DailyReport = () => {
         else {
             API.updateReport(reportid, data, token)
             .then( resp => {
+              setProcessing(false);
                 //console.log(resp);
                 //console.log(data);
                 if(resp.user == user) {
@@ -321,8 +380,9 @@ const DailyReport = () => {
                 }
             })
             .catch(error => {
+              setProcessing(false);
                 //console.log(error);
-                Alert.alert('Oops!', 'Report Not Updated!', [
+                Alert.alert('Error!', 'Report Not Updated!', [
                   {
                     text: 'Cancel',
                     //onPress: () => console.log('Cancel Pressed'),
@@ -337,6 +397,27 @@ const DailyReport = () => {
 
   return (
     <ScrollView style={styles.root}>
+
+    <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing || loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {processing ? 'Saving...' : 'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
       
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -527,12 +608,14 @@ const DailyReport = () => {
         value={comment}
       />
       </LinearGradient>
+
+        <Button
+          title={reportid == 0 ? "ADD REPORT" : "UPDATE REPORT"}
+          color="#0070bb"
+          onPress={sbbutton}
+        />
       
-      <Button
-        title={reportid == 0 ? "ADD REPORT" : "UPDATE REPORT"}
-        color="#0070bb"
-        onPress={sbbutton}
-      />
+      
     </ScrollView>
   
   );
@@ -544,7 +627,7 @@ const styles = StyleSheet.create({
   root:{flex:1},
   column: {
     flex:1,
-    padding: 20,
+    padding: 10,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between'
@@ -558,6 +641,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
 
   },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
+  },
   
   button:{
     flex: 1,
@@ -570,11 +684,11 @@ const styles = StyleSheet.create({
   },
   button3:{
     flex:1,
-    marginBottom:50,
+    marginBottom:1,
     height: 40,
     width: 365,
     padding: 10,
-    marginTop:10
+    marginTop:5
   },
   daily_fields:{
     width:'50%',
