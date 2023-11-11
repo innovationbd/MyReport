@@ -56,14 +56,10 @@ const SignInScreen = ({navigation}) => {
           username: res.user_name,
           userid: res.user_id,
           token: res.token,
-          loggedin: res.user_id ? 1 : 0
+          loggedin: res.user_id ? 1 : 0,
+          change: true
         };
-  
-        var authdata = {
-          username,
-          password,
-        }
-        
+
         storage.save({
           key: 'user', // Note: Do not use underscore("_") in key!
           id: '1001', // Note: Do not use underscore("_") in id!
@@ -72,7 +68,7 @@ const SignInScreen = ({navigation}) => {
         });
   
         setUserToken(res.token);
-        Updates.reloadAsync();
+        //Updates.reloadAsync();
       }
       else {
         Alert.alert('Login Failed!', 'Username or Password incorrect!', [

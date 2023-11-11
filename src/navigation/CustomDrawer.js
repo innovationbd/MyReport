@@ -20,38 +20,84 @@ const CustomDrawer = (props) => {
   const [userid, setUserId] = useState(0);
   const [userToken, setUserToken] = useState (null); 
   const [responsibilities, setResponsibilities] = useState([]);
+  const [change, setChange] = useState(false);
 
   useEffect(() => {
+    loadStorage();
+  }, []);
+
+  setTimeout(() => {
+    loadStorage();
+    //getUserInformation();
+    //getResponsibility();
+    console.log('repeated call');
+    //setValue(!value);
+    if(change) {
+      changeUserInfo();
+    }
+  }, 5000);
+
+  const loadStorage = () => {
     storage.load({
       key: 'user',
       id: '1001'
     })
     .then(ret => {
       // found data goes to then()
-      //console.log(ret.loggedin);
+      //console.log(ret.userid);
       setUserToken(ret.token);
       setUserId(ret.userid);
-
-      API.getResponsibilities(ret.token)
-      .then( resp =>  setResponsibilities(resp))
-      .catch (error => console.log(error));
+      setChange(ret.change);  
     });
+  }
 
-    
-  }, []);
-
-  useEffect(() => {
-    console.log(userid);
+  const getUserInformation = () => {
     if(userid > 0) {
       API.getUser(userid, userToken)
       .then( res => {
         setUser(res);
+        console.log('userinfo accessed');
       })
       .catch(error => {
         console.log(error);
       });
     }
+  }
+
+  const getResponsibility = () => {
+    API.getResponsibilities(userToken)
+      .then( resp =>  setResponsibilities(resp))
+      .catch (error => console.log(error));
+  }
+
+  useEffect(() => {
+    console.log(userid);
+    getUserInformation();
   }, [userid]);
+
+  useEffect(() => {
+    getResponsibility();
+  }, [userToken]);
+
+  const changeUserInfo = () => {
+    getUserInformation();
+    getResponsibility();
+    saveStorage(false);
+  };
+
+  const saveStorage = (changeStatus) => {
+    var userA = {
+      userid: userid,
+      token: userToken,
+      change: changeStatus
+    };
+    storage.save({
+      key: 'user', // Note: Do not use underscore("_") in key!
+      id: '1001', // Note: Do not use underscore("_") in id!
+      data: userA,
+      expires: 1000 * 3600 * 24
+    });
+  }
 
   const PageLogin = () => {
     var userA = {

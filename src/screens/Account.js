@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import storage from '../../storage';
 import { API } from '../../api-service';
 import * as Updates from 'expo-updates';
+import CustomDrawer from '../navigation/CustomDrawer';
 //import { Alert } from 'react-bootstrap';
 
 
@@ -98,6 +99,20 @@ const Account = () => {
     setResponsibility(accountInfo.responsibility);
   }
 
+  const saveStorage = (changeStatus) => {
+    var userA = {
+      userid: user,
+      token: token,
+      change: changeStatus
+    };
+    storage.save({
+      key: 'user', // Note: Do not use underscore("_") in key!
+      id: '1001', // Note: Do not use underscore("_") in id!
+      data: userA,
+      expires: 1000 * 3600 * 24
+    });
+  }
+
   const hendleSubmit = (e) => {
     const data = { 
       user, 
@@ -111,12 +126,13 @@ const Account = () => {
       console.log(resp);
         if(resp.user == user) {
             Alert.alert('Updated', 'User Info Updated!', [
-              {text: 'OK', onPress: () => Updates.reloadAsync()},
+              {text: 'OK'},
             ]);
+            saveStorage(true);
             //setUpdate(!update);
         }
         else {
-          Alert.alert('Error', 'User Info not Updated!', [
+          Alert.alert('Update Failed', 'User Info not Updated!', [
             {text: 'DISMISS'},
           ]);
         }
