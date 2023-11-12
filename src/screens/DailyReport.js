@@ -63,6 +63,11 @@ const DailyReport = () => {
   const [processingCount, setProcessingCount] = useState(0);
   const maxProcessingTime = 10; //if 10 second waiting time, then network problem
 
+  const minutes = createArray(60);
+  console.log(minutes);
+  const [minute, setMinute] = useState(0);
+  const [hour, setHour] = useState(0);
+
   const getReport = () => {
     setGotVal(false);
     console.log('allreport length outside '+allreports.length);
@@ -273,6 +278,21 @@ const DailyReport = () => {
     });   
   }, []);
 
+  function createArray(N) {
+    return [...Array(N).keys()].map(i => i + 1);
+  }
+
+  function hmindex(i, hm) {
+    return i < 0 ? hm.length-1 : (i < hm.length ? i : 0);
+  }
+
+  function myScroll(event) {
+    var x = event.touches[0].clientX;
+    var y = event.touches[0].clientY;
+    //document.getElementById("demo").innerHTML = x + ", " + y;
+    setHour(y);
+  }
+
   const createButtonAlert = () =>
     Alert.alert('Alert Title', 'Adding Report Succesfull.', [
       {
@@ -418,6 +438,8 @@ const DailyReport = () => {
           </View>
         </View>
       </Modal>
+
+      
       
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -614,6 +636,38 @@ const DailyReport = () => {
           color="#0070bb"
           onPress={sbbutton}
         />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={true}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <View style={styles.rowTime}>
+          <View style={styles.modalHour}>
+          <ScrollView decelerationRate={1} snapToAlignment={'center'}>
+          <Text style={styles.modalTimeText}>02</Text>
+          <Text style={styles.modalTimeText}>{hour}</Text>
+          
+          </ScrollView>
+          </View>
+          <Text style={styles.modalTimeText}>
+            :
+          </Text>
+          <View style={styles.modalMinute} onTouchMove={(event) => {myScroll(event)}}>
+          <Text style={styles.modalTimeText}>{twoDigit(minutes[hmindex(minute-1, minutes)]-1)}</Text>
+          <Text style={styles.modalTimeText}>{twoDigit(minutes[hmindex(minute, minutes)]-1)}</Text>
+          <Text style={styles.modalTimeText}>{twoDigit(minutes[hmindex(minute+1, minutes)]-1)}</Text>
+          
+          
+            </View>
+            </View>
+
+
+          </View>
+        </View>
+      </Modal>
       
       
     </ScrollView>
@@ -642,6 +696,14 @@ const styles = StyleSheet.create({
 
   },
 
+  rowTime: {
+    flex:1,
+    padding: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    
+  },
+
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -664,13 +726,32 @@ const styles = StyleSheet.create({
     elevation: 5,
     position: 'relative',
     paddingLeft: 50,
-    paddingRight: 50
+    paddingRight: 50,
+    height: 200
   },
   modalText: {
     marginBottom: 5,
     textAlign: 'center',
     position: 'absolute',
     top: 20
+  },
+
+  modalHour:{
+    flex:1,
+    marginRight:10,
+    padding: 10,
+    height:150
+  },
+  modalMinute:{
+    flex:1,
+    marginLeft:10,
+    padding: 10,
+    height:150
+  },
+  modalTimeText: {
+    textAlign: 'center',
+    fontSize: 25,
+    padding: 10
   },
   
   button:{
