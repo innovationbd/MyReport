@@ -28,7 +28,7 @@ const SignInScreen = ({navigation}) => {
   const [userToken, setUserToken] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [processingCount, setProcessingCount] = useState(0);
-  const maxProcessingTime = 10; //if 10 second waiting time, then net problem
+  const maxProcessingTime = 15; //if 15 second waiting time, then net problem
 
   useEffect(() => {
     if(userToken!=null) {

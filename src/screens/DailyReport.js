@@ -63,6 +63,8 @@ const DailyReport = () => {
   const [processingCount, setProcessingCount] = useState(0);
   const maxProcessingTime = 10; //if 10 second waiting time, then network problem
 
+  const maxHour = 23; //the maximum number that can be taken as hour input
+
   const getReport = () => {
     setGotVal(false);
     console.log('allreport length outside '+allreports.length);
@@ -196,6 +198,22 @@ const DailyReport = () => {
       var t0 = Math.trunc(fnum);
       var t1 = twoDigit(Math.round((fnum-t0)*60));
       return t0 + ":" + t1;
+  }
+
+  function float2hour(fnum) {
+    var t0 = Math.trunc(fnum);
+    return t0.toString();
+  }
+  function float2min(fnum) {
+    var t0 = Math.trunc(fnum);
+    var t1 = twoDigit(Math.round((fnum-t0)*60));
+    return t1.toString();
+  }
+
+  function hour2float(hour,min) {
+    var t = time.split(":");
+    var fnum = Number(t[0]) + Number(t[1])/60;
+    return fnum;
   }
 
   const changeLectureListening = (e) => {
@@ -445,9 +463,9 @@ const DailyReport = () => {
       />
 
       <View style={styles.row}>
-      <Text style={styles.leftpart1}>Quran Study {TP}</Text>
+      <Text style={styles.leftpart1}>Quran Study (Ayahs) {TP}</Text>
       <TextInput 
-        placeholder='Ayahs (Number)'
+        placeholder='Number'
         style={styles.button1}
         keyboardType="numeric"
         onChangeText = {(text)=> setQuranStudy(numericText(text, 0, 6666))}
@@ -456,9 +474,9 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Hadith Study</Text>
+      <Text style={styles.leftpart}>Hadith Study (No.)</Text>
       <TextInput 
-        placeholder='Hadiths(Number)'
+        placeholder='Number'
         style={styles.button}
         keyboardType="numeric"
         onChangeText = {(text)=> setHadithStudy(numericText(text, 0, 10000))}
@@ -467,9 +485,9 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Islamic Book Study</Text>
+      <Text style={styles.leftpart}>Islamic Book Study (Pages)</Text>
       <TextInput 
-        placeholder='Pages (Number)'
+        placeholder='Number'
         style={styles.button}
         keyboardType="numeric"
         onChangeText = {(text)=> setBookStudy(numericText(text, 0, 10000))}
@@ -478,19 +496,28 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Lecture Listening</Text>
+      <Text style={styles.leftpart}>Lecture Listening (hh:mm)</Text>
       <TextInput 
-        placeholder='hh:mm'
-        style={styles.button}
+        placeholder='hh'
+        style={styles.button_lecture}
+        keyboardType="numeric"
+        onChangeText={(text) => 
+          setLectureListening(lectureListening ? time2float(numericText(text,0,maxHour)+':'+float2min(lectureListening)) : numericText(text,0,maxHour))}
+        value={lectureListening ?  (lectureListening.length>1 ? lectureListening : float2hour(lectureListening)) : ""}
+      />
+      <Text style={styles.colon_time}>:</Text>
+      <TextInput 
+        placeholder='mm'
+        style={styles.button_lecture2}
         keyboardType="numeric"
         onChangeText={(text) =>
-          setLectureListening(lectureListening ? time2float(text) : text)}
-        value={lectureListening ? (lectureListening.length>1 ? lectureListening : float2time(lectureListening)) : ""}
+          setLectureListening(lectureListening ? time2float(float2hour(lectureListening)+':'+text) : time2float('0:'+text))}
+        value={lectureListening ? (lectureListening.length>1 ? lectureListening : float2min(lectureListening)) : ""}
       />
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Salah in Jamayah</Text>
+      <Text style={styles.leftpart}>Salah in Jamayah (Waqt)</Text>
       <TextInput 
         placeholder='Waqt (0-5)'
         style={styles.button}
@@ -502,7 +529,7 @@ const DailyReport = () => {
 
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Dawah Program</Text>
+      <Text style={styles.leftpart}>Dawah Program (No.)</Text>
       <TextInput 
         placeholder='Number'
         style={styles.button}
@@ -513,7 +540,7 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Personal Contact</Text>
+      <Text style={styles.leftpart}>Personal Contact (No.)</Text>
       <TextInput 
         placeholder='Number'
         style={styles.button}
@@ -524,18 +551,26 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Social Work</Text>
+      <Text style={styles.leftpart}>Social Work (hh:mm)</Text>
       <TextInput 
-        placeholder='hh:mm'
-        style={styles.button}
+        placeholder='hh'
+        style={styles.button_lecture}
         onChangeText={(text) =>
-          setSocialWork(socialWork ? time2float(text) : text)}
-        value={socialWork ? (socialWork.length>1 ? socialWork : float2time(socialWork)) : ""}
-      />
+          setSocialWork(socialWork ? time2float(numericText(text,0,maxHour)+':'+float2min(socialWork)) : numericText(text,0,maxHour))}
+          value={socialWork ?  (socialWork.length>1 ? socialWork : float2hour(socialWork)) : ""}
+        />
+      <Text style={styles.colon_time}>:</Text>
+      <TextInput 
+        placeholder='mm'
+        style={styles.button_lecture2}
+        onChangeText={(text) =>
+          setSocialWork(socialWork ? time2float(float2hour(socialWork)+':'+text) : time2float('0:'+text))}
+          value={socialWork ? (socialWork.length>1 ? socialWork : float2min(socialWork)) : ""}
+        />
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Distribution</Text>
+      <Text style={styles.leftpart}>Distribution (No.)</Text>
       <TextInput 
         placeholder='Number'
         style={styles.button}
@@ -546,7 +581,7 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Family Meeting</Text>
+      <Text style={styles.leftpart}>Family Meeting (No.)</Text>
       <TextInput 
         placeholder='Number'
         style={styles.button}
@@ -557,7 +592,7 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Org. Program</Text>
+      <Text style={styles.leftpart}>Organization Program (No.)</Text>
       <TextInput 
         placeholder='Number'
         style={styles.button}
@@ -568,27 +603,45 @@ const DailyReport = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Org. Time</Text>
+      <Text style={styles.leftpart}>Organization Time (hh:mm)</Text>
       <TextInput 
-        placeholder='hh:mm'
-        style={styles.button}
+        placeholder='hh'
+        style={styles.button_lecture}
         keyboardType="numeric"
         onChangeText={(text) =>
-          setOrgTime(orgTime ? time2float(text) : text)}
-        value={orgTime ? (orgTime.length>1 ? orgTime : float2time(orgTime)) : ""}
-      />
+          setOrgTime(orgTime ? time2float(numericText(text,0,maxHour)+':'+float2min(orgTime)) : numericText(text,0,maxHour))}
+          value={orgTime ?  (orgTime.length>1 ? orgTime : float2hour(orgTime)) : ""}
+        />
+      <Text style={styles.colon_time}>:</Text>
+      <TextInput 
+        placeholder='mm'
+        style={styles.button_lecture2}
+        keyboardType="numeric"
+        onChangeText={(text) =>
+          setOrgTime(orgTime ? time2float(float2hour(orgTime)+':'+text) : time2float('0:'+text))}
+          value={orgTime ? (orgTime.length>1 ? orgTime : float2min(orgTime)) : ""}
+        />
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Physical Exercise</Text>
+      <Text style={styles.leftpart}>Physical Exercise (hh:mm)</Text>
       <TextInput 
-        placeholder='hh:mm'
-        style={styles.button}
+        placeholder='hh'
+        style={styles.button_lecture}
         keyboardType="numeric"
         onChangeText={(text) =>
-          setPhysicalExercise(physicalExercise ? time2float(text) : text)}
-        value={physicalExercise ? (physicalExercise.length>1 ? physicalExercise : float2time(physicalExercise)) : ""}
-      />
+          setPhysicalExercise(physicalExercise ? time2float(numericText(text,0,maxHour)+':'+float2min(physicalExercise)) : numericText(text,0,maxHour))}
+          value={physicalExercise ?  (physicalExercise.length>1 ? physicalExercise : float2hour(physicalExercise)) : ""}
+        />
+      <Text style={styles.colon_time}>:</Text>
+      <TextInput 
+        placeholder='mm'
+        style={styles.button_lecture2}
+        keyboardType="numeric"
+        onChangeText={(text) =>
+          setPhysicalExercise(physicalExercise ? time2float(float2hour(physicalExercise)+':'+text) : time2float('0:'+text))}
+          value={physicalExercise ? (physicalExercise.length>1 ? physicalExercise : float2min(physicalExercise)) : ""}
+        />
       </View>
       
       <View style={styles.row}>
@@ -674,13 +727,31 @@ const styles = StyleSheet.create({
   },
   
   button:{
-    flex: 1,
+    flex: 0.67,
+    height: 40,
+    textAlign: 'center'
+  },
+  button_lecture:{
+    flex: 0.30,
+    height: 40,
+    textAlign: 'right'
+  },
+  button_lecture2:{
+    flex: 0.30,
     height: 40,
   },
+  colon_time:{
+    padding:5, 
+    backgroundColor: '#e7e0ec', 
+    height:40, 
+    verticalAlign: 'middle',
+    paddingTop: 10
+  },
   button1:{
-    flex: 1,
+    flex: 0.67,
     height: 40,
     borderTopRightRadius:15,
+    textAlign: 'center'
   },
   button3:{
     flex:1,
