@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import { Button,StyleSheet,View,Text,ScrollView, Alert } from 'react-native';
+import { Button,StyleSheet,View,Text,ScrollView, Alert, Modal } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import CheckBox from 'expo-checkbox';
@@ -9,6 +9,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import DropDownPicker from 'react-native-dropdown-picker';
 import storage from '../../storage';
 import { API } from '../../api-service';
+
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 
 
   
@@ -92,6 +95,12 @@ const MonthlySummary = () => {
   const [gotsummary, setGotsummary] = useState(false);
   const [summarylength, setP] = useState(100);
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
 
 
   useEffect(() => {
@@ -194,6 +203,53 @@ const MonthlySummary = () => {
   }, 500);
 
   useEffect(() => {
+    if(allsummarys.length > 0) {
+      setLoading(false);
+    } 
+  }, [allsummarys]);
+  
+  setTimeout(() => {
+    if(loadingCount <= maxProcessingTime && processingCount <= maxProcessingTime) {
+      if(processing) {
+        setProcessingCount(processingCount+1);
+      } else {
+        setProcessingCount(0);
+      }
+  
+      if(loading) {
+        setLoadingCount(loadingCount+1);
+      } else {
+        setLoadingCount(0);
+      }
+    }
+  }, 1000);
+  
+  useEffect(() => {
+    if(loadingCount > maxProcessingTime) {
+      setLoadingCount(0);
+      setLoading(false);
+      connectivityProblem();
+    }
+  }, [loadingCount]);
+  
+  useEffect(() => {
+    if(processingCount > maxProcessingTime) {
+      setProcessingCount(0);
+      setProcessing(false);
+      connectivityProblem();
+    }
+  }, [processingCount]);
+  
+  const connectivityProblem = () => {
+    Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      {text: 'DISMISS', onPress: () => {
+        setProcessing(false);
+        setLoading(false);
+      }},
+    ]);
+  }
+
+  useEffect(() => {
       getSummary();
       //setDays(new Date(year, month, 0).getDate());
   }, [allsummarys, month, year]);
@@ -248,6 +304,7 @@ const MonthlySummary = () => {
   }
 
   const sbbutton = () => {
+    setProcessing(true);
     console.log('resp');
     const data = {
         user,
@@ -267,6 +324,7 @@ const MonthlySummary = () => {
     
       API.updateSummary(summaryid, data, token)
       .then( resp => {
+        setProcessing(false);
           console.log(resp);
           console.log(data);
           if(resp.user == user) {
@@ -292,6 +350,7 @@ const MonthlySummary = () => {
           }
       })
       .catch(error => {
+        setProcessing(false);
           console.log(error);
           Alert.alert('Alert Title', 'Monthly Summary Not Updated!', [
             {
@@ -301,7 +360,6 @@ const MonthlySummary = () => {
             },
             {text: 'OK'},
           ]);
-          swal("Error", "Monthly Summary Not Updated", "warning");
       });   
   } 
 
@@ -323,6 +381,27 @@ const MonthlySummary = () => {
         end={{ x: 1, y: 1 }}
         colors={["#fdeacc", "#fdeacc"]}
         style={styles.column}>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing || loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {processing ? 'Saving...' : 'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
 
         <View style={styles.rowMonthYear}>
         <Text style={styles.prevdate} onPress={prevMonth}>{'<'}</Text>
@@ -367,51 +446,51 @@ const MonthlySummary = () => {
       
 
       <View style={styles.row}>
-      <Text style={styles.leftpart1}>Quran Study</Text>
+      <Text style={styles.leftpart1}>Quran Study (Ayahs)</Text>
       <Text style={styles.inner_amounts2}>{quranStudy}</Text>
       <Text style={styles.inner_amounts1}>{parseFloat(quranStudy / days).toFixed(2)}</Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Hadith Study</Text>
+      <Text style={styles.leftpart}>Hadith Study (No.)</Text>
       <Text style={styles.inner_amounts2}>{hadithStudy}</Text>
       <Text style={styles.inner_amounts}>{parseFloat(hadithStudy / days).toFixed(2)}</Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Islamic Book Study</Text>
-      <Text style={styles.inner_amounts2}>{bookStudy}</Text>
-      <Text style={styles.inner_amounts}>{parseFloat(bookStudy / days).toFixed(2)}</Text>
+      <Text style={styles.leftpart}>Book Study (Pages)</Text>
+      <Text style={styles.inner_amounts2}>{bookStudy} </Text>
+      <Text style={styles.inner_amounts}>{parseFloat(bookStudy / days).toFixed(2)} </Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Lecture Listening</Text>
-      <Text style={styles.inner_amounts2}>{float2time(lectureListening)}</Text>
-      <Text style={styles.inner_amounts}>{float2time(lectureListening / days)}</Text>
+      <Text style={styles.leftpart}>Lecture Listening (Hour)</Text>
+      <Text style={styles.inner_amounts2}>{float2time(lectureListening)} </Text>
+      <Text style={styles.inner_amounts}>{float2time(lectureListening / days)} </Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Salat in Jamaah</Text>
+      <Text style={styles.leftpart}>Salat in Jamaah (Waqt)</Text>
       <Text style={styles.inner_amounts2}>{salat}</Text>
       <Text style={styles.inner_amounts}>{parseFloat(salat / days).toFixed(2)}</Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Social Work</Text>
-      <Text style={styles.inner_amounts2}>{float2time(socialWork)}</Text>
-      <Text style={styles.inner_amounts}>{float2time(socialWork/days)}</Text>
+      <Text style={styles.leftpart}>Social Work (Hour)</Text>
+      <Text style={styles.inner_amounts2}>{float2time(socialWork)} </Text>
+      <Text style={styles.inner_amounts}>{float2time(socialWork/days)} </Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Org Time</Text>
-      <Text style={styles.inner_amounts2}>{float2time(orgTime)}</Text>
-      <Text style={styles.inner_amounts}>{float2time(orgTime / days)}</Text>
+      <Text style={styles.leftpart}>Org Time (Hour)</Text>
+      <Text style={styles.inner_amounts2}>{float2time(orgTime)} </Text>
+      <Text style={styles.inner_amounts}>{float2time(orgTime / days)} </Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Physical Exercise</Text>
-      <Text style={styles.inner_amounts2}>{float2time(physicalExercise)}</Text>
-      <Text style={styles.inner_amounts}>{float2time(physicalExercise / days)}</Text>
+      <Text style={styles.leftpart}>Physical Exercise (Hour)</Text>
+      <Text style={styles.inner_amounts2}>{float2time(physicalExercise)} </Text>
+      <Text style={styles.inner_amounts}>{float2time(physicalExercise / days)} </Text>
       </View>
 
       <View style={styles.row}>
@@ -431,12 +510,12 @@ const MonthlySummary = () => {
       <View style={styles.row}>
       <Text style={styles.leftpart_inner}>Family Meet</Text>
       <Text style={styles.inner_amounts2}>{familyMeeting}</Text>
-      <Text style={styles.leftpart_inner}>Self-Critic</Text>
+      <Text style={styles.leftpart_inner}>SelfCritic(no.)</Text>
       <Text style={styles.inner_inner_amounts}>{selfCriticism}</Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart}>Supporter Increase</Text>
+      <Text style={styles.leftpart}>Supporter Increase (No.)</Text>
       <TextInput 
         placeholder='Number'
         style={styles.button6}
@@ -549,8 +628,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
 
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
+  },
   daily_fields:{
-    flex:2,
+    flex:4,
     height:50,
     marginRight:30,
     marginLeft:30,
@@ -562,7 +671,7 @@ const styles = StyleSheet.create({
     height:50,
     padding:10,
     marginLeft: 5,
-    marginRight:20,
+    marginRight:10,
     marginBottom:-20
   },
   leftpart:{
@@ -606,7 +715,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   inner_amounts:{
-    flex:2,
+    flex:1,
     height:40,
     padding:10,
     marginRight:2,
@@ -615,7 +724,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   inner_inner_amounts:{
-    flex:2,
+    flex:1,
     height:40,
     padding:10,
     marginRight:2,
@@ -624,7 +733,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   inner_amounts1:{
-    flex:2,
+    flex:1,
     height:40,
     padding:10,
     marginRight:2,
@@ -669,9 +778,8 @@ const styles = StyleSheet.create({
     height:40,
     fontSize:15,
     backgroundColor:'white',
-    textAlign:'center',
     textAlignVertical:'center',
-    padding:10
+    padding: 10,
   },
   button6:{
     flex: 2.6,

@@ -1,0 +1,16 @@
+0. Update your 'DailyReport', 'MonthlyPlan', 'Monthly Summary', 'Accomplishment', 
+   'AccomplishmentR' as provided.
+1. make accomplishmentR like accomplishment (show unit similar to Accomplishment)
+2. reveiwee page advice writing in modal, and comment as scrollview
+3. make daily report inside scrollview like monthly plan
+4. style the 'add report', 'add plan', button to look beautiful as it is in 
+   Monthly Summary page; make all similar buttons beautiful.
+5. Align comment box with upper portion (Monthly Plan)
+6. Create two separate rows for Dawah Prog and Org Prog and provide unit (Monthly Summary);
+   then do the same for next two rows also; and write the field name in full form.
+   Also make scrollview like monthly plan
+7. If monthly plan or monthly summary not available, then the month-year portion
+   goes down (Accomplishment). fix it. and implement similar thing in 
+   Monthly summary and AccomplishmentR.
+8. Make syllabus scrollable but save button fixed in bottom, like monthly plan
+

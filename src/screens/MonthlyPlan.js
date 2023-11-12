@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import { Button,StyleSheet,View,Text,ScrollView,Alert } from 'react-native';
+import { Button,StyleSheet,View,Text,ScrollView,Alert, Modal } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import DropDownPicker from 'react-native-dropdown-picker';
 import moment from 'moment';
 import { API } from '../../api-service';
 import storage from '../../storage';
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 
 
 
@@ -81,6 +83,15 @@ const MonthlyPlan = () => {
   const [gotplan, setGotplan] = useState(false);
   const [planlength, setP] = useState(100);
   const [comment, setComment] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
+
+  const maxHour = 500; //the maximum number that can be taken as hour input
+
 
   const numericText = (text, min, max) => {
     let newText = '';
@@ -177,6 +188,54 @@ setTimeout(() => {
 }, 500);
 
 useEffect(() => {
+  if(allplans.length > 0) {
+    setLoading(false);
+  } 
+}, [allplans]);
+
+setTimeout(() => {
+  if(loadingCount <= maxProcessingTime && processingCount <= maxProcessingTime) {
+    if(processing) {
+      setProcessingCount(processingCount+1);
+    } else {
+      setProcessingCount(0);
+    }
+
+    if(loading) {
+      setLoadingCount(loadingCount+1);
+    } else {
+      setLoadingCount(0);
+    }
+  }
+}, 1000);
+
+useEffect(() => {
+  if(loadingCount > maxProcessingTime) {
+    setLoadingCount(0);
+    setLoading(false);
+    connectivityProblem();
+  }
+}, [loadingCount]);
+
+useEffect(() => {
+  if(processingCount > maxProcessingTime) {
+    setProcessingCount(0);
+    setProcessing(false);
+    connectivityProblem();
+  }
+}, [processingCount]);
+
+const connectivityProblem = () => {
+  Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+    {text: 'DISMISS', onPress: () => {
+      setProcessing(false);
+      setLoading(false);
+    }},
+  ]);
+}
+
+
+useEffect(() => {
     getPlan();
 }, [allplans, month, year]);
 
@@ -192,6 +251,16 @@ function float2time(fnum) {
 }
 function twoDigit(num) {
   return num<10 ? "0"+num : num.toString();
+}
+
+function float2hour(fnum) {
+  var t0 = Math.trunc(fnum);
+  return t0.toString();
+}
+function float2min(fnum) {
+  var t0 = Math.trunc(fnum);
+  var t1 = twoDigit(Math.round((fnum-t0)*60));
+  return t1.toString();
 }
 
 const prevMonth = () => {
@@ -218,6 +287,7 @@ const nextMonth = () => {
 }
 
 const sbbutton = () => {
+  setProcessing(true);
   
     const data = {
         user,
@@ -244,6 +314,7 @@ const sbbutton = () => {
     if(planid == 0) {
         API.createPlan(data, token)
         .then( resp => {
+          setProcessing(false);
             //console.log(resp);
             if(resp.user == user) {
               Alert.alert("Success!", "Plan successfully Added", [
@@ -268,6 +339,7 @@ const sbbutton = () => {
             }
         })
         .catch(error => {
+          setProcessing(false);
             //console.log(error);
             Alert.alert("Error", "Plan Not Added", [
               {
@@ -283,6 +355,7 @@ const sbbutton = () => {
       
         API.updatePlan(planid, data, token)
         .then( resp => {
+          setProcessing(false);
             //console.log(resp);
             //console.log(data);
             if(resp.user == user) {
@@ -312,6 +385,7 @@ const sbbutton = () => {
             }
         })
         .catch(error => {
+          setProcessing(false);
             //console.log(error);
             Alert.alert("Error", "Plan Not Updated", [
               {
@@ -338,6 +412,27 @@ const sbbutton = () => {
         end={{ x: 1, y: 1 }}
         colors={["#cbebcf", "#cbebcf"]}
         style={styles.column}>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing || loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {processing ? 'Saving...' : 'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
       
       <View style={styles.rowMonthYear}>
         <Text style={styles.prevdate} onPress={prevMonth}>{'<'}</Text>
@@ -368,11 +463,12 @@ const sbbutton = () => {
         />
         </View>
 
-    <ScrollView >
+    <ScrollView 
+            style={{marginBottom: 10}}>
           <View style={styles.row}>
-          <Text style={styles.leftpart1}>Quran Study</Text>
+          <Text style={styles.leftpart1}>Quran Study (Ayahs)</Text>
           <TextInput 
-            placeholder='Ayahs(Number)'
+            placeholder='Number'
             style={styles.button1}
             keyboardType="numeric"
             onChangeText = {(text)=> setQuranStudy(numericText(text, 0, 6666))}
@@ -381,9 +477,9 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Hadith Study</Text>
+          <Text style={styles.leftpart}>Hadith Study (No.)</Text>
           <TextInput 
-            placeholder='Hadiths(Number)'
+            placeholder='Number'
             style={styles.button}
             keyboardType="numeric"
             onChangeText = {(text)=> setHadithStudy(numericText(text, 0, 10000))}
@@ -392,9 +488,9 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Islamic Book Study</Text>
+          <Text style={styles.leftpart}>Islamic Book Study (Page)</Text>
           <TextInput 
-            placeholder='Pages(Number)'
+            placeholder='Number'
             style={styles.button}
             keyboardType="numeric"
             onChangeText = {(text)=> setBookStudy(numericText(text, 0, 10000))}
@@ -403,7 +499,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Lecture Listening</Text>
+          <Text style={styles.leftpart}>Lecture Listening (hrs)</Text>
           <TextInput 
             placeholder='hh:mm'
             style={styles.button}
@@ -414,7 +510,28 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Salah In Jamaah</Text>
+          <Text style={styles.leftpart}>Lecture Listening (hh:mm)</Text>
+          <TextInput 
+            placeholder='hh'
+            style={styles.button_lecture}
+            keyboardType="numeric"
+            onChangeText={(text) => 
+              setLectureListening(lectureListening ? time2float(numericText(text,0,maxHour)+':'+float2min(lectureListening)) : numericText(text,0,maxHour))}
+            value={lectureListening ?  (lectureListening.length>1 ? lectureListening : float2hour(lectureListening)) : ""}
+          />
+          <Text style={styles.colon_time}>:</Text>
+          <TextInput 
+            placeholder='mm'
+            style={styles.button_lecture1}
+            keyboardType="numeric"
+            onChangeText={(text) =>
+              setLectureListening(lectureListening ? time2float(float2hour(lectureListening)+':'+text) : time2float('0:'+text))}
+            value={lectureListening ? (lectureListening.length>1 ? lectureListening : float2min(lectureListening)) : ""}
+          />
+          </View>
+
+          <View style={styles.row}>
+          <Text style={styles.leftpart}>Salah In Jamaah (Waqt)</Text>
           <TextInput 
             placeholder='Waqt(0-5)'
             style={styles.button}
@@ -426,7 +543,7 @@ const sbbutton = () => {
 
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Dawah Program</Text>
+          <Text style={styles.leftpart}>Dawah Program (No.)</Text>
           <TextInput 
             placeholder='Number'
             style={styles.button}
@@ -437,7 +554,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Personal Contact</Text>
+          <Text style={styles.leftpart}>Personal Contact (No.)</Text>
           <TextInput 
             placeholder='Number'
             style={styles.button}
@@ -448,7 +565,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Social Work</Text>
+          <Text style={styles.leftpart}>Social Work(hrs)</Text>
           <TextInput 
             placeholder='hh:mm'
             style={styles.button}
@@ -459,7 +576,28 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Distribution</Text>
+          <Text style={styles.leftpart}>Social Work (hh:mm)</Text>
+          <TextInput 
+            placeholder='hh'
+            style={styles.button_lecture}
+            keyboardType="numeric"
+            onChangeText={(text) =>
+              setSocialWork(socialWork ? time2float(numericText(text,0,maxHour)+':'+float2min(socialWork)) : numericText(text,0,maxHour))}
+              value={socialWork ?  (socialWork.length>1 ? socialWork : float2hour(socialWork)) : ""}
+            />
+          <Text style={styles.colon_time}>:</Text>
+          <TextInput 
+            placeholder='mm'
+            style={styles.button_lecture1}
+            keyboardType="numeric"
+            onChangeText={(text) =>
+              setSocialWork(socialWork ? time2float(float2hour(socialWork)+':'+text) : time2float('0:'+text))}
+              value={socialWork ? (socialWork.length>1 ? socialWork : float2min(socialWork)) : ""}
+            />
+          </View>
+
+          <View style={styles.row}>
+          <Text style={styles.leftpart}>Distribution (No.)</Text>
           <TextInput 
             placeholder='Number'
             style={styles.button}
@@ -470,7 +608,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Family Meeting</Text>
+          <Text style={styles.leftpart}>Family Meeting (No.)</Text>
           <TextInput 
             placeholder='Number'
             style={styles.button}
@@ -481,7 +619,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Org. Program</Text>
+          <Text style={styles.leftpart}>Org. Program (No.)</Text>
           <TextInput 
             placeholder='Number'
             style={styles.button}
@@ -492,7 +630,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Org. Time</Text>
+          <Text style={styles.leftpart}>Org. Time(hrs)</Text>
           <TextInput 
             placeholder='hh:mm'
             style={styles.button}
@@ -503,7 +641,26 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Physical Exercise</Text>
+          <Text style={styles.leftpart}>Org. Time (hh:mm)</Text>
+          <TextInput 
+            placeholder='hh'
+            style={styles.button_lecture}
+            onChangeText={(text) =>
+              setOrgTime(orgTime ? time2float(numericText(text,0,maxHour)+':'+float2min(orgTime)) : numericText(text,0,maxHour))}
+              value={orgTime ?  (orgTime.length>1 ? orgTime : float2hour(orgTime)) : ""}
+            />
+          <Text style={styles.colon_time}>:</Text>
+          <TextInput 
+            placeholder='mm'
+            style={styles.button_lecture1}
+            onChangeText={(text) =>
+              setOrgTime(orgTime ? time2float(float2hour(orgTime)+':'+text) : time2float('0:'+text))}
+              value={orgTime ? (orgTime.length>1 ? orgTime : float2min(orgTime)) : ""}
+            />
+          </View>
+
+          <View style={styles.row}>
+          <Text style={styles.leftpart}>Physical Exercise(hrs)</Text>
           <TextInput 
             placeholder='hh:mm'
             style={styles.button}
@@ -512,9 +669,29 @@ const sbbutton = () => {
             value={physicalExercise ? (physicalExercise.length>1 ? physicalExercise : float2time(physicalExercise)) : ""}
           />
           </View>
+
+          <View style={styles.row}>
+          <Text style={styles.leftpart}>Physical Exercise (hh:mm)</Text>
+          <TextInput 
+            placeholder='hh'
+            style={styles.button_lecture}
+            onChangeText={(text) =>
+              setPhysicalExercise(physicalExercise ? time2float(numericText(text,0,maxHour)+':'+float2min(physicalExercise)) : numericText(text,0,maxHour))}
+              value={physicalExercise ?  (physicalExercise.length>1 ? physicalExercise : float2hour(physicalExercise)) : ""}
+            />
+          <Text style={styles.colon_time}>:</Text>
+
+          <TextInput 
+            placeholder='mm'
+            style={styles.button_lecture1}
+            onChangeText={(text) =>
+              setPhysicalExercise(physicalExercise ? time2float(float2hour(physicalExercise)+':'+text) : time2float('0:'+text))}
+              value={physicalExercise ? (physicalExercise.length>1 ? physicalExercise : float2min(physicalExercise)) : ""}
+            />
+          </View>
           
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Self-criticism</Text>
+          <Text style={styles.leftpart}>Self-criticism (Days)</Text>
           <TextInput 
             placeholder='Days'
             style={styles.button}
@@ -524,7 +701,7 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Supporter Increase</Text>
+          <Text style={styles.leftpart}>Supporter Increase (No.)</Text>
           <TextInput 
             placeholder='Number'
             style={styles.button}
@@ -534,7 +711,7 @@ const sbbutton = () => {
           </View>
 
           <TextInput 
-            placeholder='Comment(Optional)'
+            placeholder='Comment (Optional)'
             style={styles.button3}
             onChangeText = {setPlanComment}
             value={planComment}
@@ -555,21 +732,23 @@ const sbbutton = () => {
         
           
           
-          <Button
-            title={planid == 0 ? "ADD PLAN" : "UPDATE PLAN"}
-            color="#0070bb"
-            onPress={sbbutton}
-          />
+          
         
           
           
         </ScrollView>
+        <Button
+            title={planid == 0 ? "ADD PLAN" : "UPDATE PLAN"}
+            color="#0070bb"
+            onPress={sbbutton}
+          />
     </LinearGradient>
   );
 };
   
 export default MonthlyPlan;
-  
+
+const mR = 20;
 const styles = StyleSheet.create({
   root:{
     flex:1,
@@ -598,16 +777,70 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
 
   },
-  button:{
+
+  centeredView: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
+  },
+  button:{
+    flex: 0.75,
     height: 40,
-    width: 100,
+    marginRight:mR,
+    textAlign: 'center'
+  },
+  button_lecture1:{
+    flex: 0.34,
+    height: 40,
+    marginRight:mR,
+  },
+  button_lecture:{
+    flex: 0.34,
+    height: 40,
+    textAlign: 'right'
+  },
+  button_lecture2:{
+    flex: 0.30,
+    height: 40,
+  },
+  colon_time:{
+    padding:5, 
+    backgroundColor: '#e7e0ec', 
+    height:40, 
+    verticalAlign: 'middle',
+    paddingTop: 10
   },
   button1:{
-    flex: 1,
+    flex: 0.75,
     height: 40,
-    width: 100,
+    marginRight:mR,
     borderTopRightRadius:15,
+    textAlign: 'center'
   },
   button3:{
     flex:1,
@@ -625,7 +858,7 @@ const styles = StyleSheet.create({
     padding:10,
   },
   leftpart:{
-    width:150,
+    flex:1,
     height:40,
     marginRight:10,
     marginLeft:2,
@@ -636,7 +869,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   leftpart1:{
-    width:150,
+    flex:1,
     height:40,
     marginRight:10,
     marginLeft:2,
@@ -690,11 +923,10 @@ const styles = StyleSheet.create({
     height:30,
     borderColor:'white',
     borderRadius:20,
-    marginLeft:20
   },
   prevdate:{
     height:50,
-    width:40,
+    width:30,
     paddingBottom:7,
     backgroundColor:'#79c52c',
     textAlign:'center',
@@ -706,7 +938,8 @@ const styles = StyleSheet.create({
   },
   nextdate:{
     height:50,
-    width:40,
+    width:30,
+    marginRight:10,
     paddingBottom:7,
     backgroundColor:'#79c52c',
     textAlign:'center',

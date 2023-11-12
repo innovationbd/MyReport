@@ -61,7 +61,7 @@ const DailyReport = () => {
   const [loadingCount, setLoadingCount] = useState(0);
   const [processing, setProcessing] = useState(false);
   const [processingCount, setProcessingCount] = useState(0);
-  const maxProcessingTime = 10; //if 10 second waiting time, then network problem
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
 
   const maxHour = 23; //the maximum number that can be taken as hour input
 
@@ -208,12 +208,6 @@ const DailyReport = () => {
     var t0 = Math.trunc(fnum);
     var t1 = twoDigit(Math.round((fnum-t0)*60));
     return t1.toString();
-  }
-
-  function hour2float(hour,min) {
-    var t = time.split(":");
-    var fnum = Number(t[0]) + Number(t[1])/60;
-    return fnum;
   }
 
   const changeLectureListening = (e) => {
