@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View,TextInput, Alert } from 'react-native'
+import { ScrollView, StyleSheet, Text, View,TextInput, Alert, Modal } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import SelectDropdown from 'react-native-select-dropdown'
 import { Button } from 'react-native';
@@ -7,6 +7,8 @@ import moment from 'moment';
 import DropDownPicker from 'react-native-dropdown-picker';
 import storage from '../../storage';
 import { API } from '../../api-service';
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 
 
 const Reviewee = (props) => {
@@ -31,6 +33,12 @@ const Reviewee = (props) => {
   const [counsellor, setCounsellor] = useState(user);
   const [advice, setAdvice] = useState("");
   const [reviweeUser, setReviweeData] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
 
   const [disable, setDisable] = useState('disabled');
   const countries = ["Abdul Hamid", "Abul Hasan", "Nasir Uddin", "Abdul Hadi","Riyaz Alom","Khalid Hossain"]
@@ -214,6 +222,53 @@ const Reviewee = (props) => {
     }
   },[reviewee, filterCon]);
 
+  useEffect(() => {
+    if(filterCon.length > 0 && alluser.length > 0) {
+      setLoading(false);
+    } 
+  }, [filterCon, alluser]);
+
+  setTimeout(() => {
+    if(loadingCount <= maxProcessingTime && processingCount <= maxProcessingTime) {
+      if(processing) {
+        setProcessingCount(processingCount+1);
+      } else {
+        setProcessingCount(0);
+      }
+
+      if(loading) {
+        setLoadingCount(loadingCount+1);
+      } else {
+        setLoadingCount(0);
+      }
+    }
+  }, 1000);
+
+  useEffect(() => {
+    if(loadingCount > maxProcessingTime) {
+      setLoadingCount(0);
+      setLoading(false);
+      connectivityProblem();
+    }
+  }, [loadingCount]);
+
+  useEffect(() => {
+    if(processingCount > maxProcessingTime) {
+      setProcessingCount(0);
+      setProcessing(false);
+      connectivityProblem();
+    }
+  }, [processingCount]);
+
+  const connectivityProblem = () => {
+    Alert.alert('Network Error!', 'Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      {text: 'DISMISS', onPress: () => {
+        setProcessing(false);
+        setLoading(false);
+      }},
+    ]);
+  }
+
   const prevDay = () => {
     const prev = moment(selectedDate).subtract(1, 'days');
     setSelectedDate(new Date(prev));
@@ -260,6 +315,7 @@ const Reviewee = (props) => {
   }
 
   const sendAdvice = () => {
+    setProcessing(true);
     const data = {
       reviewee,
       counsellor,
@@ -267,6 +323,7 @@ const Reviewee = (props) => {
       };
           API.createAdvice(data, token)
           .then( resp => {
+            setProcessing(false);
               console.log(resp);
               if(resp.counsellor == counsellor) {
                 fetchAdvice();
@@ -281,6 +338,7 @@ const Reviewee = (props) => {
               }
           })
           .catch(error => {
+            setProcessing(false);
               //console.log(error);
               //Alert.alert("Error", "Report Not Added", "warning");
               Alert.alert(rname[reviewee], 'Sending Error!', [
@@ -293,6 +351,27 @@ const Reviewee = (props) => {
 
   return (
     <ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing || loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {processing ? 'Saving...' : 'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
       <View style={styles.fullPart}>
         <View style={styles.upperPart}>
           <View style={styles.upperPartRow}>
@@ -509,6 +588,38 @@ const styles = StyleSheet.create({
     borderRadius:1,
     borderColor:'#39b549'
   },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
+  },
+  
   counselor:{
     flex:1,
     backgroundColor:'green',

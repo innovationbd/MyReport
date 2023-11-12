@@ -173,7 +173,7 @@ const DailyReport = () => {
     }, [processingCount]);
 
     const connectivityProblem = () => {
-      Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      Alert.alert('Network Error!', 'Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
         {text: 'DISMISS', onPress: () => {
           setProcessing(false);
           setLoading(false);

@@ -1,5 +1,5 @@
 import React, {useEffect, useState,useCallback} from 'react';
-import { SafeAreaView,StyleSheet,View,Text,ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView,StyleSheet,View,Text,ScrollView, TouchableOpacity, Modal, Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import ProgressBar from 'react-native-progress/Bar';
@@ -8,8 +8,11 @@ import { API } from "../../api-service";
 import moment from "moment";
 import storage from '../../storage';
 
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
+
   
-const AccomplishmentR = () => {
+const Accomplishment = () => {
   const [isSelected, setSelection] = useState(false);
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState(null);
@@ -83,6 +86,10 @@ const AccomplishmentR = () => {
   const progbarH = 5;   //progress bar width
   const fdigit = 0;     //for showing floating digit in percentage
 
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
+
   const [username, setUsername] = useState([]);
   useEffect(() => {
     storage.load({
@@ -154,6 +161,38 @@ const AccomplishmentR = () => {
     getSummary();
   }, [allplans, allsummarys, month, year]);
 
+  useEffect(() => {
+    if(allsummarys.length > 0 && allplans.length > 0) {
+      setLoading(false);
+    } 
+  }, [allsummarys, allplans]);
+  
+  setTimeout(() => {
+    if(loadingCount <= maxProcessingTime) {
+      if(loading) {
+        setLoadingCount(loadingCount+1);
+      } else {
+        setLoadingCount(0);
+      }
+    }
+  }, 1000);
+  
+  useEffect(() => {
+    if(loadingCount > maxProcessingTime) {
+      setLoadingCount(0);
+      setLoading(false);
+      connectivityProblem();
+    }
+  }, [loadingCount]);
+  
+  const connectivityProblem = () => {
+    Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      {text: 'DISMISS', onPress: () => {
+        setLoading(false);
+      }},
+    ]);
+  }
+
   
 function getMonthName(monthNumber) {
   const date = new Date();
@@ -203,7 +242,6 @@ return (
         end={{ x: 1, y: 1 }}
         colors={["#fbcfd1", "#fbcfd1"]}
         style={styles.column}>
-      
       <View><Text style={styles.reviewee_name}>{username}</Text></View>
       <View style={styles.rowMonthYear}>
         <Text style={styles.prevdate} onPress={prevMonth}>{'<'}</Text>
@@ -250,12 +288,12 @@ return (
         <View style={styles.row}>
         <Text style={styles.daily_fields} >Fields</Text>
         <Text style={styles.amounts}>   Plan | Accom</Text>
-        <Text style={styles.amounts1}>Progress %</Text>
+        <Text style={styles.amounts1}>Prog %</Text>
         </View>
         
 
         <View style={styles.row}>
-          <Text style={styles.leftpart1}>Quran Study</Text>
+          <Text style={styles.leftpart1}>Quran Study (Ayahs)</Text>
           <Text style={styles.inner_amounts}>
             {p.quranStudy } | {s.quranStudy}
           </Text>
@@ -269,7 +307,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Hadith Study</Text>
+          <Text style={styles.leftpart}>Hadith Study (No.)</Text>
           <Text style={styles.inner_amounts}>
             {p.hadithStudy } | {s.hadithStudy}
           </Text>
@@ -282,7 +320,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Islamic Book Study</Text>
+          <Text style={styles.leftpart}>Book Study (Pages)</Text>
           <Text style={styles.inner_amounts}>
             {p.bookStudy } | {s.bookStudy}
           </Text>
@@ -295,7 +333,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Lecture Listening</Text>
+          <Text style={styles.leftpart}><Text style={{letterSpacing: -0.7}}>Lecture Listening (Hour)</Text></Text>
           <Text style={styles.inner_amounts}>
           {float2time(p.lectureListening)} | {float2time(s.lectureListening)}
           </Text>
@@ -308,7 +346,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Salah In Jamaah</Text>
+          <Text style={styles.leftpart}><Text style={{letterSpacing: -0.7}}>Salah In Jamaah (Waqt)</Text></Text>
           <Text style={styles.inner_amounts}>
             {p.salat } | {s.salat}
           </Text>
@@ -321,7 +359,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Social Work</Text>
+          <Text style={styles.leftpart}>Social Work (Hour)</Text>
           <Text style={styles.inner_amounts}>
             {float2time(p.socialWork)} | {float2time(s.socialWork)}
           </Text>
@@ -334,7 +372,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Org. Time</Text>
+          <Text style={styles.leftpart}>Org. Time (Hour)</Text>
           <Text style={styles.inner_amounts}>
           {float2time(p.orgTime)} | {float2time(s.orgTime)}
           </Text>
@@ -347,7 +385,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Physical Exercise</Text>
+          <Text style={styles.leftpart}>Ph. Exercise (Hour)</Text>
           <Text style={styles.inner_amounts}>
           {float2time(p.physicalExercise)} | {float2time(s.physicalExercise)}
           </Text>
@@ -360,7 +398,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Dawah Program</Text>
+          <Text style={styles.leftpart}>Dawah Program (No.)</Text>
           <Text style={styles.inner_amounts}>
           {p.dawahProgram } | {s.dawahProgram}
           </Text>
@@ -373,7 +411,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Org. Program</Text>
+          <Text style={styles.leftpart}>Org. Program (No.)</Text>
           <Text style={styles.inner_amounts}>
           {p.orgProgram } | {s.orgProgram}
           </Text>
@@ -386,7 +424,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Personal Contact</Text>
+          <Text style={styles.leftpart}><Text style={{letterSpacing: -0.5}}>Personal Contact (No.)</Text></Text>
           <Text style={styles.inner_amounts}>
           {p.memberContact } | {s.memberContact}
           </Text>
@@ -399,7 +437,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Distribution</Text>
+          <Text style={styles.leftpart}>Distribution (No.)</Text>
           <Text style={styles.inner_amounts}>
           {p.distribution } | {s.distribution}
           </Text>
@@ -412,7 +450,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart}>Family Meeting</Text>
+          <Text style={styles.leftpart}>Family Meeting (No.)</Text>
           <Text style={styles.inner_amounts}>
           {p.familyMeeting } | {s.familyMeeting}
           </Text>
@@ -426,7 +464,7 @@ return (
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.leftpart2}>Self Criticism</Text>
+          <Text style={styles.leftpart2}>Self Criticism (Days)</Text>
           <Text style={styles.inner_amounts}>
           {p.selfCriticism } | {s.selfCriticism}
           </Text>
@@ -450,6 +488,27 @@ return (
           </Text>
         </ScrollView>
       )}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
       
 
     </LinearGradient>
@@ -457,7 +516,7 @@ return (
   );
 };
   
-export default AccomplishmentR;
+export default Accomplishment;
   
 const rowH = 40;
 const styles = StyleSheet.create({
@@ -486,20 +545,49 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
 
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
+  },
   daily_fields:{
-    flex:2,
-    width:150,
+    flex:2.6,
     height:20,
-    marginRight:100,
-    marginLeft:30,
+    textAlign: 'center'
   },
   amounts:{
-    flex:6,
+    flex:1.5,
     height:20,
   },
   amounts1:{
-    flex:4,
+    flex:1,
     height:20,
+    textAlign: 'center'
   },
   leftpart:{
     flex:2.6,
@@ -544,32 +632,35 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   inner_amounts:{
-    flex:2.6,
+    flex:1.5,
     width:100,
     height:rowH,
     padding:10,
     backgroundColor:'white',
     textAlign:'center',
     textAlignVertical:'center',
-    borderWidth:0
+    borderWidth:0,
+    marginRight:2
   },
   right_amounts:{
-    flex:1.2,
+    flex:1,
     width:100,
     height:rowH,
     paddingRight:10,
     paddingTop:5,
+    paddingLeft:2,
     backgroundColor:'white',
     textAlign:'center',
     textAlignVertical:'center',
     borderWidth:0
   },
   right_amounts1:{
-    flex:1.2,
+    flex:1,
     width:100,
     height:rowH,
     paddingRight:10,
     paddingTop:5,
+    paddingLeft:2,
     backgroundColor:'white',
     textAlign:'center',
     borderTopRightRadius:15,
@@ -577,10 +668,11 @@ const styles = StyleSheet.create({
     borderWidth:0
   },
   right_amounts2:{
-    flex:1.2,
+    flex:1,
     width:100,
     height:rowH,
-    paddingRight:10,
+    paddingRight:7,
+    paddingLeft:5,
     paddingTop:5,
     backgroundColor:'white',
     textAlign:'center',

@@ -1,6 +1,5 @@
-0. Update your 'DailyReport', 'MonthlyPlan', 'Monthly Summary', 'Accomplishment', 
-   'AccomplishmentR' as provided.
-1. make accomplishmentR like accomplishment (show unit similar to Accomplishment)
+1. Update your 'DailyReport', 'MonthlyPlan', 'Monthly Summary', 'Accomplishment', 
+   'AccomplishmentR' and 'Reviewee' as provided.
 2. reveiwee page advice writing in modal, and comment as scrollview
 3. make daily report inside scrollview like monthly plan
 4. style the 'add report', 'add plan', button to look beautiful as it is in 
@@ -13,4 +12,5 @@
    goes down (Accomplishment). fix it. and implement similar thing in 
    Monthly summary and AccomplishmentR.
 8. Make syllabus scrollable but save button fixed in bottom, like monthly plan
+9. Syllabus search box, reviewee and counsellor search box to active
 
