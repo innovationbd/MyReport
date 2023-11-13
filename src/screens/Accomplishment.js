@@ -298,9 +298,9 @@ return (
           </Text>
           <View style={styles.right_amounts1}>
             <Text>
-              {p.quranStudy ? parseFloat(s.quranStudy/p.quranStudy*100).toFixed(fdigit)+'%' : 'No Plan'}
+              {p.quranStudy>0 ? parseFloat(s.quranStudy/p.quranStudy*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.quranStudy ? s.quranStudy/p.quranStudy : 0} width={progbarW} height={progbarH} marginLeft={2}  
+            <ProgressBar progress={p.quranStudy>0 ? s.quranStudy/p.quranStudy : 0} width={progbarW} height={progbarH} marginLeft={2}  
             />
           </View>
         </View>
@@ -312,9 +312,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.hadithStudy ? parseFloat(s.hadithStudy/p.hadithStudy*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.hadithStudy>0 ? parseFloat(s.hadithStudy/p.hadithStudy*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.hadithStudy ? s.hadithStudy/p.hadithStudy : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.hadithStudy>0 ? s.hadithStudy/p.hadithStudy : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -325,9 +325,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.bookStudy ? parseFloat(s.bookStudy/p.bookStudy*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.bookStudy>0 ? parseFloat(s.bookStudy/p.bookStudy*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.bookStudy ? s.bookStudy/p.bookStudy : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.bookStudy>0 ? s.bookStudy/p.bookStudy : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -338,9 +338,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-              {p.lectureListening ? parseFloat(s.lectureListening/p.lectureListening*100).toFixed(fdigit)+'%' : 'No Plan'}
+              {p.lectureListening>0 ? parseFloat(s.lectureListening/p.lectureListening*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.lectureListening ? s.lectureListening/p.lectureListening : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.lectureListening>0 ? s.lectureListening/p.lectureListening : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -351,9 +351,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-              {p.salat ? parseFloat(s.salat/p.salat*100).toFixed(fdigit)+'%' : 'No Plan'}
+              {p.salat>0 ? parseFloat(s.salat/p.salat*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.salat ? s.salat/p.salat : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.salat>0 ? s.salat/p.salat : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -364,9 +364,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.socialWork ? parseFloat(s.socialWork/p.socialWork*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.socialWork>0 ? parseFloat(s.socialWork/p.socialWork*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.socialWork ? s.socialWork/p.socialWork : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.socialWork>0 ? s.socialWork/p.socialWork : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -377,9 +377,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.orgTime ? parseFloat(s.orgTime/p.orgTime*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.orgTime>0 ? parseFloat(s.orgTime/p.orgTime*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.orgTime ? s.orgTime/p.orgTime : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.orgTime>0 ? s.orgTime/p.orgTime : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -390,9 +390,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.physicalExercise ? parseFloat(s.physicalExercise/p.physicalExercise*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.physicalExercise>0 ? parseFloat(s.physicalExercise/p.physicalExercise*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.physicalExercise ? s.physicalExercise/p.physicalExercise : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.physicalExercise>0 ? s.physicalExercise/p.physicalExercise : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -403,9 +403,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.dawahProgram ? parseFloat(s.dawahProgram/p.dawahProgram*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.dawahProgram>0 ? parseFloat(s.dawahProgram/p.dawahProgram*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.dawahProgram ? s.dawahProgram/p.dawahProgram : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.dawahProgram>0 ? s.dawahProgram/p.dawahProgram : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -416,9 +416,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.orgProgram ? parseFloat(s.orgProgram/p.orgProgram*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.orgProgram>0 ? parseFloat(s.orgProgram/p.orgProgram*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.orgProgram ? s.orgProgram/p.orgProgram : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.orgProgram>0 ? s.orgProgram/p.orgProgram : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -429,9 +429,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.memberContact ? parseFloat(s.memberContact/p.memberContact*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.memberContact>0 ? parseFloat(s.memberContact/p.memberContact*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.memberContact ? s.memberContact/p.memberContact : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.memberContact>0 ? s.memberContact/p.memberContact : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -442,9 +442,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.distribution ? parseFloat(s.distribution/p.distribution*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.distribution>0 ? parseFloat(s.distribution/p.distribution*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.distribution ? s.distribution/p.distribution : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.distribution>0 ? s.distribution/p.distribution : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 
@@ -455,9 +455,9 @@ return (
           </Text>
           <View style={styles.right_amounts}>
             <Text>
-            {p.familyMeeting ? parseFloat(s.familyMeeting/p.familyMeeting*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.familyMeeting>0 ? parseFloat(s.familyMeeting/p.familyMeeting*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.familyMeeting ? s.familyMeeting/p.familyMeeting : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.familyMeeting>0 ? s.familyMeeting/p.familyMeeting : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         
         </View>
@@ -469,9 +469,9 @@ return (
           </Text>
           <View style={styles.right_amounts2}>
             <Text>
-            {p.selfCriticism ? parseFloat(s.selfCriticism/p.selfCriticism*100).toFixed(fdigit)+'%' : 'No Plan'}
+            {p.selfCriticism>0 ? parseFloat(s.selfCriticism/p.selfCriticism*100).toFixed(fdigit)+'%' : 'No Plan'}
             </Text>
-            <ProgressBar progress={p.selfCriticism ? s.selfCriticism/p.selfCriticism : 0} width={progbarW} height={progbarH} marginLeft={2}/>
+            <ProgressBar progress={p.selfCriticism>0 ? s.selfCriticism/p.selfCriticism : 0} width={progbarW} height={progbarH} marginLeft={2}/>
           </View>
         </View>
 

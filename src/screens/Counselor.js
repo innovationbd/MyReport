@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Modal, Alert } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import SelectDropdown from 'react-native-select-dropdown'
 import { Button } from 'react-native';
@@ -6,6 +6,8 @@ import { Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 import storage from '../../storage';
 import { API } from '../../api-service';
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 
 
 const Counselor = () => {
@@ -28,6 +30,11 @@ const Counselor = () => {
   const [cunsellorUser, setCounsellorData] = useState([]);
   const [counsellor, setCounsellor] = useState([]);
   const [reviewee, setReviewee] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
+
 
   const countries = ["Abdul Hamid", "Abul Hasan", "Nasir Uddin", "Abdul Hadi","Riyaz Alom","Khalid Hossain"]
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -98,6 +105,38 @@ const Counselor = () => {
       fetchUsers();
     }
   }, 500);
+
+  useEffect(() => {
+    if(filterCon.length > 0 && alluser.length > 0) {
+      setLoading(false);
+    } 
+  }, [filterCon, alluser]);
+  
+  setTimeout(() => {
+    if(loadingCount <= maxProcessingTime) {
+      if(loading) {
+        setLoadingCount(loadingCount+1);
+      } else {
+        setLoadingCount(0);
+      }
+    }
+  }, 1000);
+  
+  useEffect(() => {
+    if(loadingCount > maxProcessingTime) {
+      setLoadingCount(0);
+      setLoading(false);
+      connectivityProblem();
+    }
+  }, [loadingCount]);
+  
+  const connectivityProblem = () => {
+    Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      {text: 'DISMISS', onPress: () => {
+        setLoading(false);
+      }},
+    ]);
+  }
 
   useEffect(() => {
     counsellorList();
@@ -228,15 +267,29 @@ const Counselor = () => {
               </View>
             )}
         </ScrollView>
-        
-        
-        
 
       </View>
-
-      
-
     </View>
+    <Modal
+        animationType="slide"
+        transparent={true}
+        visible={loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
     
   )
@@ -300,6 +353,37 @@ const styles = StyleSheet.create({
     borderWidth:2,
     borderColor:'#1d70b8',
     height: 125
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
   },
   counselor:{
     flex:1,

@@ -14,3 +14,13 @@
 8. Make syllabus scrollable but save button fixed in bottom, like monthly plan
 9. Syllabus search box, reviewee and counsellor search box to active
 
+
+Day: 14/11/23
+Note: While working in any page, plz take it from github 'maruf' branch, then perform the necessary update. After finishing update task, send it to me by whatsapp.
+
+2. Syllabus scroll is OK,but both upper part in top and save button in bottom should be fixed.
+3. Monthly plan bottom button fixed is OK, just redesign it to look better. So, your updated
+   Monthlyplan.js is not accepted. Take my version again and redesign the button.
+4. Make account page background color across fullscreen.
+
+

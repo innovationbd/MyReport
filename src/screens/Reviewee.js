@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View,TextInput, Alert, Modal } from 'react-native'
+import { ScrollView, StyleSheet, Text, View,TextInput, Alert, Modal, TouchableOpacity } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import SelectDropdown from 'react-native-select-dropdown'
 import { Button } from 'react-native';
@@ -12,6 +12,8 @@ import * as Animatable from "react-native-animatable";
 
 
 const Reviewee = (props) => {
+
+  const [showModal,setshowModal]=useState(false);
 
   const [status, setStatus] = useState(undefined); // For message
 
@@ -116,16 +118,16 @@ const Reviewee = (props) => {
     });
   };
 
-  const selectAdvices = () => {
+  /*const selectAdvices = () => {
     const selAdvice = filterCon ? filterCon.filter((item) => item.reviewee == reviewee) : 0;
     if(selAdvice) {
       setCurrentAdvices(selAdvice);
       setCurrentAdvice(selAdvice[0]);
       setIndexAdvice(0);
     }
-  };
+  };*/
 
-  const selectAdvice = (i) => {
+  /*const selectAdvice = (i) => {
     var ind = indexAdvice+i;
     if(ind >= currentAdvices.length) {
       ind = 0;
@@ -134,7 +136,7 @@ const Reviewee = (props) => {
     }
     setCurrentAdvice(currentAdvices[ind]);
     setIndexAdvice(ind);
-  };
+  };*/
 
   const fetchUsers = () => {
     API.getUsers(token)
@@ -216,11 +218,24 @@ const Reviewee = (props) => {
     }
   },[currentAdvice]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if(reviewee) {
       selectAdvices();
     }
-  },[reviewee, filterCon]);
+  },[reviewee, filterCon]);*/
+
+  useEffect(() => {
+    setCurrentAdvices(filterCon);
+  }, [filterCon]);
+
+  function selectAdvices(id){
+    const selAdvice = filterCon ? filterCon.filter((item) => item.reviewee == id) : 0;
+    if(selAdvice) {
+      setCurrentAdvices(selAdvice);
+      //setCurrentAdvice(selAdvice[0]);
+      //setIndexAdvice(0);
+    }
+  };
 
   useEffect(() => {
     if(filterCon.length > 0 && alluser.length > 0) {
@@ -314,8 +329,18 @@ const Reviewee = (props) => {
     }
   }
 
+  function getName(userid) {
+    const usr = alluser.length ? alluser.filter((item) => item.user == userid)[0] : null;
+    if(usr) {
+      return usr.firstName==null ? usr.id : usr.firstName+" "+usr.lastName;
+    } else {
+      return ' ';
+    }
+  }
+
   const sendAdvice = () => {
     setProcessing(true);
+    setshowModal(false);
     const data = {
       reviewee,
       counsellor,
@@ -415,6 +440,7 @@ const Reviewee = (props) => {
                       <Text style={styles.name_list}>{rname ? rname[item.id] : ''}</Text>
                       <Text style={styles.advices} onPress={() => {
                         setReviewee(item.id);
+                        selectAdvices(item.id)
                       }}>Select</Text>
                     </View>
                 )
@@ -427,35 +453,7 @@ const Reviewee = (props) => {
           </ScrollView>
 
         
-        <View style={styles.middlepart}>
-          <View style={styles.middlepartRow}>
-          <View style={styles.comment_row}>
-            <Text style={styles.reviewee_info}>{reviewee ? truncateName(rname[reviewee]) : 'No Reviewee'}</Text>
-            <View style={styles.comment}>
-              <Text style={styles.prevcmnt} onPress={() => { selectAdvice(-1); }}>{'<'}</Text>
-            
-                <Text style={styles.comment_number}>
-                  {reviewee && currentAdvice ? currentAdvice.time.substring(0, 10)+' ' : '     '} 
-                  @ {reviewee && currentAdvice ? currentAdvice.time.substring(11, 16) : '     '}
-                </Text>
-              
-              <Text style={styles.nextcmnt} onPress={() => { selectAdvice(1); }}>{'>'}</Text>
-            </View>
-            </View>
-            <Text style={styles.reviewee_info1}>{reviewee && currentAdvice ? truncateAdvice(currentAdvice.advice) : 'No Comment'}</Text>
-            {
-              currentAdvice ? (
-                currentAdvice.advice ? (
-                  currentAdvice.advice.length >= maxAdviceLength ? (
-                  <Text style={styles.seeMore} onPress={seeLargeAdvice}>... See more</Text>
-                ) : ('')
-                ) : ('')
-              ) : ('')
-              
-            }
-            {/*<Text style={styles.reviewee_info2}>Associate, Since 2021</Text>*/}
-          </View>
-        </View>
+        
 
         <View style={styles.lowerPart}>
           {/*<View style={styles.lowerPartRow}>
@@ -493,8 +491,36 @@ const Reviewee = (props) => {
             }}>
               View Report
           </Text>
+          <Text style={styles.viewReport1}
+          onPress={() => {
+            setshowModal(true);
+          }}
+          
+          >Write Review</Text>
+          <Modal 
+          transparent={true} 
+          visible={showModal} 
+          onRequestClose={() => setshowModal(false) }
+          >
+          <TouchableOpacity style={styles.modalContainer} onPress={() => setshowModal(false)} >
+                  <TouchableOpacity style={styles.modal} activeOpacity={1} >
+                  <View style={styles.lowerlowerPart}>
+                    <Text style={styles.write_review}>Write Review</Text>
+                    <TextInput
+                      multiline={true}
+                      placeholder={'Write review to ' + truncateName(rname[reviewee])}
+                      style={styles.write_review1}
+                      onChangeText = {setAdvice}
+                      value = {advice}
+                    />
+                    <Text style={styles.view} onPress={sendAdvice}>Send</Text>
+                  </View>
+                  </TouchableOpacity>
+              </TouchableOpacity>
+          </Modal> 
         </View>
 
+        {/* 
         <View style={styles.lowerlowerPart}>
             <Text style={styles.write_review}>Write Review</Text>
             <TextInput
@@ -506,7 +532,72 @@ const Reviewee = (props) => {
             />
           <Text style={styles.view} onPress={sendAdvice}>Send</Text>
         </View>
+        */}
+        <View>
+          
+        <View style={styles.counselor_name_advices}>
+          <Text style={styles.last_advices}>Reviews Sent</Text>
+          <Text style={styles.alladvices} onPress={() => {
+                        setCurrentAdvices(filterCon);
+                      }}>See All Reviews</Text>
+        </View>
+        
+        {/*<View style={styles.middlepart}>
+        
+          <View style={styles.middlepartRow}>
+          <View style={styles.comment_row}>
+            <Text style={styles.reviewee_info}>{reviewee ? truncateName(rname[reviewee]) : 'No Reviewee'}</Text>
+            <View style={styles.comment}>
+              <Text style={styles.prevcmnt} onPress={() => { selectAdvice(-1); }}>{'<'}</Text>
+            
+                <Text style={styles.comment_number}>
+                  {reviewee && currentAdvice ? currentAdvice.time.substring(0, 10)+' ' : '     '} 
+                  @ {reviewee && currentAdvice ? currentAdvice.time.substring(11, 16) : '     '}
+                </Text>
+              
+              <Text style={styles.nextcmnt} onPress={() => { selectAdvice(1); }}>{'>'}</Text>
+            </View>
+            </View>
+            <Text style={styles.reviewee_info1}>{reviewee && currentAdvice ? truncateAdvice(currentAdvice.advice) : 'No Comment'}</Text>
+            {
+              currentAdvice ? (
+                currentAdvice.advice ? (
+                  currentAdvice.advice.length >= maxAdviceLength ? (
+                  <Text style={styles.seeMore} onPress={seeLargeAdvice}>... See more</Text>
+                ) : ('')
+                ) : ('')
+              ) : ('')
+              
+            }
+            {/*<Text style={styles.reviewee_info2}>Associate, Since 2021</Text>*/}
+         {/*} </View>
+        </View>*/}
 
+        <ScrollView style={styles.middlepart}>
+        { 
+            currentAdvices ? (
+              currentAdvices.map((item) => {
+                return (
+                  <View style={styles.middlepartrow}>
+                    <Text style={styles.reviewee_info}>{getName(item.reviewee)}</Text>
+                    <Text style={styles.advice_time}>
+                      {item.time.substring(0, 10)+' '} 
+                      @ {item.time.substring(11, 16)}
+                    </Text>
+                    <Text style={styles.reviewee_info1}>{item.advice}</Text>
+                    {/*<Text style={styles.seeMore}>See More...</Text>*/}
+                  
+                </View>
+                )
+              })
+            ) : (
+              <View style={styles.middlepartrow}>
+                <Text style={styles.reviewee_info}>No review sent yet.</Text>
+              </View>
+            )}
+        </ScrollView>
+
+      </View>
       </View>
     </ScrollView>
     
@@ -533,33 +624,93 @@ const styles = StyleSheet.create({
     marginTop:10,
     marginLeft:10,
     marginRight:10,
-    marginBottom:20,
+    marginBottom:5,
     height:187
   },
   middlepart:{
     flex:1,
     flexDirection:'column',
+    
+    height: 270
+  },
+  middlepartrow:{
+    flex:1,
+    flexDirection:'column',
     marginTop:10,
     marginLeft:10,
-    marginBottom:10,
+    marginBottom:0,
     marginRight:10,
     backgroundColor:'white',
     borderRadius:15,
     borderWidth:2,
     borderColor:'#39b549',
-    height: 125
+    minHeight: 80
   },
   lowerPart:{
     flex:2,
-    flexDirection:'column',
-    marginTop:10,
+    flexDirection:'row',
+    marginTop:0,
     marginLeft:10,
     marginRight:10,
     backgroundColor:'white',
     borderWidth:2,
     borderColor:'#39b549',
+    borderBottomLeftRadius:14,
+    borderBottomRightRadius:14,
+    position:'relative'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    width: 350,
+    height: 200
+  },
+  counselor_name_advices:{
+    flex:1,
+    flexDirection:'row',
+    marginLeft:10,
+    marginRight:10,
+    backgroundColor:'#0070bb',
+    fontSize:20,
+    color:'black',
+    textAlignVertical:'center',
+    verticalAlign:'middle',
+    alignItems:'center',
+    marginTop:5,
+    height:60,
+    borderColor:'#0070bb',
     borderTopLeftRadius:14,
-    borderTopRightRadius:14
+    borderTopRightRadius:14,
+  },
+  last_advices:{
+    flex:1,
+    backgroundColor:'green',
+    fontSize:20,
+    color:'white',
+    fontWeight:'bold',
+    textAlign:'auto',
+    textAlignVertical:'center',
+    height:60,
+    padding:10,
+  },
+  alladvices:{
+    flex:1,
+    backgroundColor:'white',
+    color:'black',
+    fontSize:15,
+    textAlign:'center',
+    textAlignVertical:'center',
+    marginLeft:100,
+    marginRight:10,
+    height:30,
+    padding:5,
+    borderRadius:5,
+    position:'absolute',
+    right:10,
+    bottom:10,
   },
   lowerlowerPart:{
     flex:2,
@@ -570,8 +721,7 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     borderWidth:1,
     borderColor:'#39b549',
-    borderBottomLeftRadius:14,
-    borderBottomRightRadius:14,
+    borderRadius:14,
     height: 150,
     position:'relative'
   },
@@ -591,6 +741,13 @@ const styles = StyleSheet.create({
 
   centeredView: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  centeredView1: {
+    height:50,
+    width:40,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 5,
@@ -692,6 +849,19 @@ const styles = StyleSheet.create({
     height:50,
     borderRadius:5,
     position:'relative',
+    padding: 10
+  },
+  viewReport1:{
+    backgroundColor:'#39b549',
+    color:'white',
+    fontSize:20,
+    textAlign:'center',
+    textAlignVertical:'center',
+    margin: 10,
+    height:50,
+    borderRadius:5,
+    position:'absolute',
+    right: 5,
     padding: 10
   },
   seeMore:{
@@ -833,6 +1003,13 @@ const styles = StyleSheet.create({
     textAlignVertical:'center',
     fontSize:15,
     padding: 3
+  },
+  advice_time:{
+    backgroundColor:'white',
+    color:'#1f734d',
+    fontWeight:'bold',
+    fontSize:15,
+    paddingLeft: 5
   },
 
   

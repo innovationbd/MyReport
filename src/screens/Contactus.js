@@ -1,4 +1,4 @@
-import { Button,ScrollView, StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native'
+import { Button,ScrollView, StyleSheet, Text, View, Alert, TouchableOpacity, Modal } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { TextInput } from 'react-native-gesture-handler';
 import { Linking } from 'react-native';
@@ -8,6 +8,8 @@ import config from "../../config";
 import { API } from '../../api-service';
 import storage from '../../storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 
 const Contactus = () => {
 
@@ -20,6 +22,59 @@ const Contactus = () => {
   const [phone,setPhone]=useState(null);
   const [email,setEmail]=useState('');
   const [message,setMessage]=useState('');
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
+
+  useEffect(() => {
+    if(user>0) {
+      setLoading(false);
+    } 
+  }, [user]);
+
+  setTimeout(() => {
+    if(loadingCount <= maxProcessingTime && processingCount <= maxProcessingTime) {
+      if(processing) {
+        setProcessingCount(processingCount+1);
+      } else {
+        setProcessingCount(0);
+      }
+
+      if(loading) {
+        setLoadingCount(loadingCount+1);
+      } else {
+        setLoadingCount(0);
+      }
+    }
+  }, 1000);
+
+  useEffect(() => {
+    if(loadingCount > maxProcessingTime) {
+      setLoadingCount(0);
+      setLoading(false);
+      connectivityProblem();
+    }
+  }, [loadingCount]);
+
+  useEffect(() => {
+    if(processingCount > maxProcessingTime) {
+      setProcessingCount(0);
+      setProcessing(false);
+      connectivityProblem();
+    }
+  }, [processingCount]);
+
+  const connectivityProblem = () => {
+    Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      {text: 'DISMISS', onPress: () => {
+        setProcessing(false);
+        setLoading(false);
+      }},
+    ]);
+  }
 
   const checkTextInput = () => {
     //Check for the Name TextInput
@@ -47,6 +102,7 @@ const Contactus = () => {
   };
 
 const sendDataToApi= ()=>{
+  setProcessing(true);
   //e.preventDefault();
  
   const data = {
@@ -57,6 +113,7 @@ const sendDataToApi= ()=>{
   }
   API.postFeedback(data, token)
   .then((res) => {
+    setProcessing(false);
   setStatus({ type: 'success' });
   Alert.alert("Success!", "Feedback successfully sent.", [
     {
@@ -74,6 +131,7 @@ const sendDataToApi= ()=>{
   //e.target.reset();
   })
   .catch((error) => {
+    setProcessing(false);
   setStatus({ type: 'error', error });
   Alert.alert("Error", "Feedback Not Sent!", [
     {
@@ -104,6 +162,27 @@ const sendDataToApi= ()=>{
 
   return (
     <ScrollView style={styles.fullbody}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing || loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {processing ? 'Sending...' : 'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
+      
       <View style={styles.upperBox}>
         <View style={styles.upperBoxRow1}>
           <View style={styles.upperBox1}>
@@ -216,6 +295,31 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection:'column',
     backgroundColor:'#fefbd5',
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
   },
   upperBox:{
     flex:7,

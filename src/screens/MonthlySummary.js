@@ -88,6 +88,7 @@ const MonthlySummary = () => {
   const [orgTime, setOrgTime] = useState(null);
   const [physicalExercise, setPhysicalExercise] = useState(null);
   const [selfCriticism, setSelfCriticism] = useState(null);
+  const [reportdays, setReportdays] = useState(null);
 
   const [allsummarys, setAllsummarys] = useState([]);
   const [summaryid, setSummaryid] = useState(0);
@@ -128,6 +129,7 @@ const MonthlySummary = () => {
       const summary = allsummarys.filter((item) => item.month == month && item.year == year && item.user == user);
       setP(summary.length);
       if(summary.length != 0) {
+          //console.log(summary);
           setSummaryid(summary[0].id);
           //setQuranStudy(summary.map((item) => item.quranStudy));
           setQuranStudy(summary[0].quranStudy == null ? null : summary[0].quranStudy);
@@ -155,6 +157,8 @@ const MonthlySummary = () => {
           setQiamulLailDate(summary[0].qiamulLailDate == null ? '' : summary[0].qiamulLailDate);
           setEyanatDate(summary[0].eyanatDate == null ? '' : summary[0].eyanatDate);
           setmonthlyComment(summary[0].monthlyComment == null ? '' : summary[0].monthlyComment);
+
+          setReportdays(summary[0].reportdays == null ? null : summary[0].reportdays);
       }
       else {
           setSummaryid(0);
@@ -182,6 +186,7 @@ const MonthlySummary = () => {
           setQiamulLailDate('');
           setEyanatDate('');
           setmonthlyComment('');
+          setReportdays(null);
       }
     }
   }
@@ -241,7 +246,7 @@ const MonthlySummary = () => {
   }, [processingCount]);
   
   const connectivityProblem = () => {
-    Alert.alert('Network Error!', 'Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+    Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
       {text: 'DISMISS', onPress: () => {
         setProcessing(false);
         setLoading(false);
@@ -328,7 +333,7 @@ const MonthlySummary = () => {
           console.log(resp);
           console.log(data);
           if(resp.user == user) {
-            Alert.alert('Alert Title', 'Monthly Report Updated!', [
+            Alert.alert('Success!', 'Monthly Report Updated!', [
               {
                 text: 'Cancel',
                 //onPress: () => console.log('Cancel Pressed'),
@@ -339,7 +344,7 @@ const MonthlySummary = () => {
             setGotsummary(!gotsummary);
           }
           else {
-            Alert.alert('Alert Title', 'Monthly Summary Not Updated!', [
+            Alert.alert('Something Wrong!', 'Monthly Summary Not Updated!', [
               {
                 text: 'Cancel',
                 //onPress: () => console.log('Cancel Pressed'),
@@ -352,7 +357,7 @@ const MonthlySummary = () => {
       .catch(error => {
         setProcessing(false);
           console.log(error);
-          Alert.alert('Alert Title', 'Monthly Summary Not Updated!', [
+          Alert.alert('Error!', 'Monthly Summary Not Updated!', [
             {
               text: 'Cancel',
               //onPress: () => console.log('Cancel Pressed'),
@@ -430,6 +435,8 @@ const MonthlySummary = () => {
           style={styles.select_month1}
           containerStyle={{width: 130, height: 60}}
         />
+
+        
         </View>
 
         
@@ -437,7 +444,8 @@ const MonthlySummary = () => {
     
     
     <ScrollView>
-
+    
+    <Text style={{textAlign:'center', fontSize: 15, fontWeight:'bold'}}>Report Kept: {reportdays} Days </Text>
       <View style={styles.row}>
       <Text style={styles.daily_fields} >Fields</Text>
       <Text style={styles.amounts}>Total</Text>
@@ -494,24 +502,31 @@ const MonthlySummary = () => {
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart_inner}>Dawah Prog</Text>
-      <Text style={styles.inner_amounts2}>{dawahProgram}</Text>
-      <Text style={styles.leftpart_inner}>Org Prog</Text>
-      <Text style={styles.inner_inner_amounts}>{orgProgram}</Text>
+      <Text style={styles.leftpart}>Dawah Prog (No.)</Text>
+      <Text style={styles.button6}>{dawahProgram}</Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart_inner}>Contact</Text>
-      <Text style={styles.inner_amounts2}>{memberContact}</Text>
-      <Text style={styles.leftpart_inner}>Distribution</Text>
-      <Text style={styles.inner_inner_amounts}>{distribution}</Text>
+      <Text style={styles.leftpart}>Org Prog (No.)</Text>
+      <Text style={styles.button6}>{orgProgram}</Text>
       </View>
 
       <View style={styles.row}>
-      <Text style={styles.leftpart_inner}>Family Meet</Text>
-      <Text style={styles.inner_amounts2}>{familyMeeting}</Text>
-      <Text style={styles.leftpart_inner}>SelfCritic(no.)</Text>
-      <Text style={styles.inner_inner_amounts}>{selfCriticism}</Text>
+      <Text style={styles.leftpart}>Personal Contact (No.)</Text>
+      <Text style={styles.button6}>{memberContact}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.leftpart}>Distribution (No.)</Text>
+      <Text style={styles.button6}>{distribution}</Text>
+      </View>
+
+      <View style={styles.row}>
+      <Text style={styles.leftpart}>Family Meeting (No.)</Text>
+      <Text style={styles.button6}>{familyMeeting}</Text>
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.leftpart}>Self-Criticism (Days)</Text>
+      <Text style={styles.button6}>{selfCriticism}</Text>
       </View>
 
       <View style={styles.row}>
@@ -582,7 +597,7 @@ const MonthlySummary = () => {
         onChangeText = {setmonthlyComment}
         value={monthlyComment}
       />
-
+  
       <View style={styles.footer}>
         <View style={styles.save_share} >
           <Text style={styles.save_share_text} onPress={sbbutton}>SAVE</Text>
@@ -593,9 +608,9 @@ const MonthlySummary = () => {
   </View> */}
       </View>
 
+      </ScrollView>
       
-      
-    </ScrollView></LinearGradient>
+    </LinearGradient>
   
   );
 };
@@ -743,7 +758,7 @@ const styles = StyleSheet.create({
     textAlignVertical:'center'
   },
   inner_amounts2:{
-    flex:1,
+    flex:0.9,
     height:40,
     padding:10,
     marginRight:2,
@@ -774,7 +789,7 @@ const styles = StyleSheet.create({
     padding:10
   },
   button5:{
-    flex: 0.4,
+    flex: 0.3,
     height:40,
     fontSize:15,
     backgroundColor:'white',
@@ -799,7 +814,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     marginHorizontal:10,
-    marginTop:30,
+    marginTop:1,
     borderRadius:30
   },
   save_share1: {

@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { Button,StyleSheet,View,Text,ScrollView,Alert } from 'react-native';
+import { Button,StyleSheet,View,Text,ScrollView,Alert, Modal } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import ProgressBar from 'react-native-progress/Bar';
@@ -7,6 +7,8 @@ import CheckBox from 'expo-checkbox';
 import config from "../../config";
 import storage from '../../storage';
 import { API } from '../../api-service';
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 //import axios from "axios";
   
 const Syllabus = () => {
@@ -18,9 +20,14 @@ const Syllabus = () => {
   const [totalbook, setTotalBook] = useState([]);
   const [bookStudy, setBookStudy] = useState("");
   const [bookRead, setbookRead] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [bookList, setBookList] = useState([]);
   const [token, setToken] = useState (null); 
+
+  const [loading, setLoading] = useState(true);
+  const [loadingCount, setLoadingCount] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [processingCount, setProcessingCount] = useState(0);
+  const maxProcessingTime = 15; //if 15 second waiting time, then network problem
 
   const fetchBook = () => {
     API.getBooks(token)
@@ -71,7 +78,58 @@ const Syllabus = () => {
     if(!bookRead.length) {
       userbookData();
     }
+
+    /*if(!bookStudy) {
+      userbookData();
+    }*/
   }, 500);
+
+  useEffect(() => {
+    if(book.length > 0) {
+      setLoading(false);
+    } 
+  }, [book]);
+
+  setTimeout(() => {
+    if(loadingCount <= maxProcessingTime && processingCount <= maxProcessingTime) {
+      if(processing) {
+        setProcessingCount(processingCount+1);
+      } else {
+        setProcessingCount(0);
+      }
+
+      if(loading) {
+        setLoadingCount(loadingCount+1);
+      } else {
+        setLoadingCount(0);
+      }
+    }
+  }, 1000);
+
+  useEffect(() => {
+    if(loadingCount > maxProcessingTime) {
+      setLoadingCount(0);
+      setLoading(false);
+      connectivityProblem();
+    }
+  }, [loadingCount]);
+
+  useEffect(() => {
+    if(processingCount > maxProcessingTime) {
+      setProcessingCount(0);
+      setProcessing(false);
+      connectivityProblem();
+    }
+  }, [processingCount]);
+
+  const connectivityProblem = () => {
+    Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      {text: 'DISMISS', onPress: () => {
+        setProcessing(false);
+        setLoading(false);
+      }},
+    ]);
+  }
 
   const Progress = book.length>0 ? (bookRead.length / book.length) * 100 : 0;
   const pbgcolor=Progress<=25?"danger":Progress<=50?"warning":Progress<=75?"info":"success";
@@ -83,6 +141,7 @@ const Syllabus = () => {
   //----------------------------------------------------------
 
   const updateBookData = () => {
+    setProcessing(true);
     const data = {
       user,
       bookRead,
@@ -91,6 +150,7 @@ const Syllabus = () => {
 
     API.updateUser(user, data, token)
             .then( resp => {
+              setProcessing(false);
                 console.log(resp);
                 //console.log(data);
                 if(resp.user == user) {
@@ -105,6 +165,7 @@ const Syllabus = () => {
                 }
             })
             .catch(error => {
+              setProcessing(false);
                 console.log('error: '+error);
                 Alert.alert('Oops!', 'Book reading Not Updated!', [
                   {text: 'Dismiss'},
@@ -113,13 +174,35 @@ const Syllabus = () => {
   };
 
   return (
+    <>
     <ScrollView> 
       
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         colors={["#f3eef6", "#f3eef6"]}
-        style={styles.column}>    
+        style={styles.column}>   
+
+        <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing || loading}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {processing ? 'Saving...' : 'Loading...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal> 
 
       <View style={styles.row}>
         <View style={styles.upper_amounts}>
@@ -168,15 +251,17 @@ const Syllabus = () => {
         style={styles.button3}
             />*/}
 
-      <Button
-            title="Save"
-            color="#0070bb"
-            onPress={updateBookData}
-      />
+      
 
       </LinearGradient>
       
     </ScrollView>
+    <Button
+    title="Save"
+    color="#0070bb"
+    onPress={updateBookData}
+    />
+    </>
   
   );
 };
@@ -200,6 +285,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
 
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  modalView: {
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'relative',
+    paddingLeft: 50,
+    paddingRight: 50
+  },
+  modalText: {
+    marginBottom: 5,
+    textAlign: 'center',
+    position: 'absolute',
+    top: 20
   },
   serial:{
     flex:0.5,

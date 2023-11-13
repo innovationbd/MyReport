@@ -1,11 +1,13 @@
 import React, {useEffect,useState} from "react";
-import { Button, ScrollView, StyleSheet, Text, View,Alert } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, View,Alert, Modal } from 'react-native';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { LinearGradient } from "expo-linear-gradient";
 import storage from '../../storage';
 import config from "../../config";
 //import axios from "axios";
 import { API } from "../../api-service";
+import loading_line from "../../assets/loading_line.gif";
+import * as Animatable from "react-native-animatable";
 
 
 const ChangePassword = () =>{
@@ -16,6 +18,11 @@ const ChangePassword = () =>{
     const [new_password2, setPassword2] = useState("");
     const [new_password, setPassword] = useState("");
     const [token, setToken] = useState (null);
+
+    const [processing, setProcessing] = useState(false);
+    const [processingCount, setProcessingCount] = useState(0);
+    const maxProcessingTime = 15; //if 15 second waiting time, then network problem
+
     var myColor = "green";
     var retypeMessage = '';
     var passMatched = false;
@@ -33,10 +40,37 @@ const ChangePassword = () =>{
         });   
       }, []);
 
+      setTimeout(() => {
+        if(processingCount <= maxProcessingTime) {
+          if(processing) {
+            setProcessingCount(processingCount+1);
+          } else {
+            setProcessingCount(0);
+          }
+        }
+      }, 1000);
+
+      useEffect(() => {
+        if(processingCount > maxProcessingTime) {
+          setProcessingCount(0);
+          setProcessing(false);
+          connectivityProblem();
+        }
+      }, [processingCount]);
+  
+      const connectivityProblem = () => {
+        Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+          {text: 'DISMISS', onPress: () => {
+            setProcessing(false);
+          }},
+        ]);
+      }
+
 
       const userChangePassword = (e) => {
        // e.preventDefault();
         if(new_password == new_password2){ 
+          setProcessing(true);
           //setPassword(new_password1);
           const data = {
             old_password,
@@ -46,6 +80,7 @@ const ChangePassword = () =>{
           //console.log(new_password);
           API.changePassword(data, token)
             .then((res) => {
+              setProcessing(false);
               console.log(res);
               setStatus({ type: "error" });
               Alert.alert("Error", "Check Old & New Password,Password at least 8 characters.", [
@@ -58,6 +93,7 @@ const ChangePassword = () =>{
               ]);
             })
             .catch((error) => {
+              setProcessing(false);
               console.log(error);
               
               setStatus({ type: "success" });
@@ -110,6 +146,27 @@ const ChangePassword = () =>{
         colors={["#a7d49c", "#006ae3"]}
         style={styles.container}
         >
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={processing}
+        >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+          <Text style={styles.modalText}>
+            {'Processing...'}
+          </Text>
+          <Animatable.Image
+          animation="fadeInDown"
+          source={loading_line}
+          style={{ width: 191, height: 100, zIndex: -1}}
+          resizeMode="stretch"
+
+        />
+          </View>
+        </View>
+      </Modal>
             <View>
             <View style={styles.lower_body}>
             <Text style={styles.change_password}>Change Password</Text>
@@ -159,6 +216,37 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
+    },
+
+    centeredView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 5,
+    },
+    modalView: {
+      margin: 10,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      padding: 10,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+      position: 'relative',
+      paddingLeft: 50,
+      paddingRight: 50
+    },
+    modalText: {
+      marginBottom: 5,
+      textAlign: 'center',
+      position: 'absolute',
+      top: 20
     },
     change_password:{
         flexDirection:'row',

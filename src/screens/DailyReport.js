@@ -173,7 +173,7 @@ const DailyReport = () => {
     }, [processingCount]);
 
     const connectivityProblem = () => {
-      Alert.alert('Network Error!', 'Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
+      Alert.alert('Network Error!', ' Please check your network connection and Try Again. If the problem still persist, please logout, close the app, and login again.', [
         {text: 'DISMISS', onPress: () => {
           setProcessing(false);
           setLoading(false);
@@ -408,9 +408,14 @@ const DailyReport = () => {
     } 
 
   return (
-    <ScrollView style={styles.root}>
+    <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        colors={["#ddeacc", "#ddeacc"]}
+        style={styles.column}>
+    
 
-    <Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={processing || loading}
@@ -431,13 +436,9 @@ const DailyReport = () => {
         </View>
       </Modal>
       
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        colors={["#ddeacc", "#ddeacc"]}
-        style={styles.column}>
       
-      <View style={styles.row}>
+      
+      <View style={styles.rowMonthYear}>
       <Text style={styles.prevdate} onPress={prevDay}>{'<'}</Text>
       <Text style={styles.textdate} onPress={showDatePicker}>
           {date}
@@ -455,6 +456,8 @@ const DailyReport = () => {
         minimumDate={new Date('2022-01-01')}
         maximumDate={new Date()}
       />
+
+      <ScrollView style={{marginBottom: 10}}>
 
       <View style={styles.row}>
       <Text style={styles.leftpart1}>Quran Study (Ayahs) {TP}</Text>
@@ -654,16 +657,20 @@ const DailyReport = () => {
         onChangeText = {setComment}
         value={comment}
       />
-      </LinearGradient>
 
-        <Button
-          title={reportid == 0 ? "ADD REPORT" : "UPDATE REPORT"}
-          color="#0070bb"
-          onPress={sbbutton}
-        />
+      <View style={styles.footer}>
+              <View style={styles.save_share} >
+                <Text style={styles.save_share_text} onPress={sbbutton}>{reportid == 0 ? "ADD REPORT" : "UPDATE REPORT"}</Text>
+              </View> 
+      </View>
+      </ScrollView>
+
+
       
       
-    </ScrollView>
+      
+    
+    </LinearGradient>
   
   );
 };
@@ -683,6 +690,15 @@ const styles = StyleSheet.create({
   row: {
     flex:1,
     padding: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+
+  },
+
+  rowMonthYear: {
+    flex:1,
+    padding: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
@@ -826,6 +842,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 30,
     color: 'white'
+  },
+  footer:{
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  save_share: {
+    backgroundColor: 'green',
+    flex: 1,
+    height: 40,
+    marginHorizontal:10,
+    marginTop:10,
+    borderRadius:30
+  },
+  save_share_text:{
+    marginTop:10,
+    textAlign:'center',
+    color:'white'
   },
   
 });
