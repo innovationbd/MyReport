@@ -6,7 +6,7 @@ import CheckBox from 'expo-checkbox';
 import { useEffect } from 'react';
 import storage from '../../storage';
 import { API } from '../../api-service';
-import * as Updates from 'expo-updates';
+//import * as Updates from 'expo-updates';
 import CustomDrawer from '../navigation/CustomDrawer';
 import loading_line from "../../assets/loading_line.gif";
 import * as Animatable from "react-native-animatable";

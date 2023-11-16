@@ -1,4 +1,25 @@
 1. After login, it shows login failed.
+2. Accomplishment color to change in final version.
+3. After logout, when login from another id, counsellor page is not updated for new id.
+
+3. RCTview problem in Accompishment and AccomplishmentR pages. Details below:
+[Invariant Violation: [2267,"RCTView",{"transform":[{"translateX":0},{"translateX":"<<NaN>>"},{"scaleX":"<<NaN>>"}]}] is not usable as a native method argument]
+ ERROR  Error: Exception in HostFunction: Malformed calls from JS: field sizes are different.
+
+[[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,14],[21,8,21,8,21,21,21,8,21,21,21,21,21,21,21,8,21,8,21,21,21,21,21,21,21,21,21,21,21,13],[[2263,"RCTRawText",{"text":"NaN%"}],[2285,[],[],[2717],[0],[]],[2287,"RCTRawText",{"text":"NaN%"}],[2309,[],[],[2719],[0],[]],[2313,"RCTRawText",{"text":"NaN%"}],[2335,"RCTRawText",{"text":"2:45"}],[2345,"RCTRawText",{"text":"NaN%"}],[2369,[],[],[2723],[0],[]],[2373,"RCTRawText",{"text":"NaN%"}],[2393,"RCTRawText",{"text":"100:45"}],[2403,"RCTRawText",{"text":"NaN%"}],[2423,"RCTRawText",{"text":"6:07"}],[2433,"RCTRawText",{"text":"NaN%"}],[2453,"RCTRawText",{"text":"79:00"}],[2463,"RCTRawText",{"text":"NaN%"}],[2485,[],[],[2725],[0],[]],[2487,"RCTRawText",{"text":"NaN%"}],[2537,[],[],[2727],[0],[]],[2539,"RCTRawText",{"text":"NaN%"}],[103,"onTransitionProgress",1]],4254]
+
+Suspected Extra Pages:
+1. Appstacks
+2. SignupScreen
+3. Pagehome
+4. Loginbody
+5. PageLogin
+6. Settings
+
+
+Package to uninstall:
+1. update
+
 
 01326283041
 no numbers needed

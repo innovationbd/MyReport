@@ -20,7 +20,7 @@ const Counselor = () => {
   //const [cname, setCname] = useState([]);
 
   const [advice, setAdvice] = useState("");
-  const [data, setData] = useState([]);
+  
   const [searchApiData, setsearchApiData] = useState([]);
   const [filterVal, seFilterVal] = useState("");
   const [filterCon, setFilterCon] = useState([]);
@@ -37,9 +37,12 @@ const Counselor = () => {
 
 
   const countries = ["Abdul Hamid", "Abul Hasan", "Nasir Uddin", "Abdul Hadi","Riyaz Alom","Khalid Hossain"]
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = query => setSearchQuery(query);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  //const onChangeSearch = query => setSearchQuery(query);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [error,setError] = useState(null);
+  const [fullData, setFullData] = useState("");
   useEffect(() => {
     storage.load({
       key: 'user',
@@ -180,6 +183,10 @@ const Counselor = () => {
     }
   };
 
+  const handleSearch = (query) =>{
+    setSearchQuery(query);
+  }
+
 
   return (
     <ScrollView>
@@ -208,9 +215,11 @@ const Counselor = () => {
           */}
           <Searchbar
                   placeholder="Search"
-                  onChangeText={onChangeSearch}
+                  onChangeText={(query) => handleSearch(query)}
                   value={searchQuery}
                   style={styles.counselorList}
+                  autoCapitalize='none'
+                  autoCorrect={false}
           />
         </View>
         <ScrollView style={styles.upperPartList}>
