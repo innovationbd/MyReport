@@ -1,0 +1,10 @@
+1. Open the project location in the terminal and run this command: 
+
+	"keytool -genkeypair -v -storetype PKCS12 -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000"
+	
+2. place the keystore file in the android directory (it doesn't have any android directory then create manually)
+
+3. The type the command "eas login" (If you are not logged in.)
+4. If you have want to create different aab file of different product id then firstly run "expo init" command
+5. then run this command: "eas build:configure"
+6. run "eas build --platform all" (for android: replace "all" with "android")

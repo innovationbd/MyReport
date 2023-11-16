@@ -1,0 +1,24 @@
+npm install react-native-storage
+npm install @react-native-async-storage/async-storage
+
+npm i react-sweetalert2
+
+npm i react-native-progress
+
+npm install moment --save 
+
+https://www.npmjs.com/package/react-native-month-year-picker
+npm install react-native-month-year-picker --save
+
+npm i react-native-select-dropdown
+
+npm install @rneui/themed --save
+
+expo install expo-updates    //for reload app after login
+
+
+https://stackoverflow.com/questions/76556243/native-module-rndatepicker-tried-to-override-rndatepicker-check-the-getpackages
+
+eas login
+eas build:configure
+eas build -p android --profile preview
