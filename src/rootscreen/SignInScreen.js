@@ -17,7 +17,6 @@ import { API } from '../../api-service';
 import storage from '../../storage';
 import { NavigationContainer } from "@react-navigation/native";
 import AppStack from "../navigation/AppStack";
-import * as Updates from 'expo-updates';
 
 //import { TextInput } from "react-native-gesture-handler";
 
@@ -69,11 +68,10 @@ const SignInScreen = ({navigation}) => {
 
     API.loginAuth(data)
     .then( res => {
+      setProcessing(false);
       console.log(res.user_name);
       console.log(res.user_id);
       console.log(res.token);
-
-      
 
       if(res.token) {
         var userA = {
@@ -92,7 +90,6 @@ const SignInScreen = ({navigation}) => {
         });
   
         setUserToken(res.token);
-        //Updates.reloadAsync();
       }
       else {
         Alert.alert('Login Failed!', 'Username or Password incorrect!', [
@@ -103,17 +100,9 @@ const SignInScreen = ({navigation}) => {
       
     })
     .catch(error => {
-        console.log(error);
-        /*if(API.connectionError(error.toString())) {
-          Alert.alert('Login Failed!', 'Server Error! Please try again later.', [
-            {text: 'DISMISS'},
-          ]);
-        } else {
-          Alert.alert('Login Failed!', 'Please try again later.', [
-            {text: 'DISMISS'},
-          ]);
-        }*/
-        userToken==null ? connectivityProblem() : '';
+      setProcessing(false);
+      console.log(error);
+      userToken==null ? connectivityProblem() : '';
     });
 
     storage.load({

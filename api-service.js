@@ -213,11 +213,6 @@ export class API {
         }).then( resp => resp.json() )
     }
 
-    static connectionError(resp) {
-        return resp.includes(config.hostingError);
-    }
-    
-
     /*static loginUser(body) {
         return fetch(`http://127.0.0.1:8000/auth/`, {
             method: 'POST',

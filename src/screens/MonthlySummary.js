@@ -445,7 +445,7 @@ const MonthlySummary = () => {
     
     <ScrollView>
     
-    <Text style={{textAlign:'center', fontSize: 15, fontWeight:'bold'}}>Report Kept: {reportdays} Days </Text>
+    <Text style={{textAlign:'center', fontSize: 15, fontWeight:'bold'}}>Report Kept: {reportdays ? reportdays : 0} Days </Text>
       <View style={styles.row}>
       <Text style={styles.daily_fields} >Fields</Text>
       <Text style={styles.amounts}>Total</Text>

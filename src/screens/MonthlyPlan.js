@@ -499,17 +499,6 @@ const sbbutton = () => {
           </View>
 
           <View style={styles.row}>
-          <Text style={styles.leftpart}>Lecture Listening (hrs)</Text>
-          <TextInput 
-            placeholder='hh:mm'
-            style={styles.button}
-            onChangeText={(text) =>
-              setLectureListening(lectureListening ? time2float(text) : text)}
-            value={lectureListening ? (lectureListening.length>1 ? lectureListening : float2time(lectureListening)) : ""}
-          />
-          </View>
-
-          <View style={styles.row}>
           <Text style={styles.leftpart}>Lecture Listening (hh:mm)</Text>
           <TextInput 
             placeholder='hh'
@@ -815,12 +804,12 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   button_lecture1:{
-    flex: 0.34,
+    flex: 0.35,
     height: 40,
     marginRight:mR,
   },
   button_lecture:{
-    flex: 0.34,
+    flex: 0.33,
     height: 40,
     textAlign: 'right'
   },

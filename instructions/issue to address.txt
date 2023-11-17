@@ -1,6 +1,6 @@
 1. After login, it shows login failed.
 2. Accomplishment color to change in final version.
-3. After logout, when login from another id, counsellor page is not updated for new id.
+3. After logout, when login from another id, counsellor, reviewee page is not updated for new id.
 
 3. RCTview problem in Accompishment and AccomplishmentR pages. Details below:
 [Invariant Violation: [2267,"RCTView",{"transform":[{"translateX":0},{"translateX":"<<NaN>>"},{"scaleX":"<<NaN>>"}]}] is not usable as a native method argument]

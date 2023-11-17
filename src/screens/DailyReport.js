@@ -742,12 +742,12 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   button_lecture:{
-    flex: 0.30,
+    flex: 0.28,
     height: 40,
     textAlign: 'right'
   },
   button_lecture2:{
-    flex: 0.30,
+    flex: 0.32,
     height: 40,
   },
   colon_time:{
