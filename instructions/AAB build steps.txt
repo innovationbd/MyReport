@@ -1,3 +1,11 @@
+For new folder new id build:
+1. Copy all files except android folder, app.json, eas.json file.
+2. Then eas configure
+3. In app.json file copy everything else extra from prev app.json.
+4. Rename report in app.json file, package.json, package-lock.json.
+5. Rename "package": "com.innovation21.MyReport" as you want.
+
+Build AAB:
 1. Open the project location in the terminal and run this command: 
 
 	"keytool -genkeypair -v -storetype PKCS12 -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000"
