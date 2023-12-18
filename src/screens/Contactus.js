@@ -161,7 +161,10 @@ const sendDataToApi= ()=>{
   }, []);
 
   return (
-    <ScrollView style={styles.fullbody}>
+    <ScrollView style={styles.fullbody}
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    >
       <Modal
         animationType="slide"
         transparent={true}
@@ -245,7 +248,10 @@ const sendDataToApi= ()=>{
         </View>
       </View>
       
-      <ScrollView style={styles.lowerBox}>
+      <ScrollView style={styles.lowerBox}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      >
         <Text style={styles.lowerBoxText}>Give Feedback</Text>
       </ScrollView>
       <TextInput 
@@ -341,6 +347,8 @@ const styles = StyleSheet.create({
     backgroundColor:'#50a6f4',
     borderTopLeftRadius:10,
     borderTopRightRadius:10,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   lowerBoxTextInput:{
     flex:1,
@@ -377,6 +385,10 @@ const styles = StyleSheet.create({
     borderEndColor:'green',
     backgroundColor:'#ffffff',
     borderTopLeftRadius:10,
+
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     borderWidth:1,
     borderColor: '#39b549',
   },
@@ -387,6 +399,9 @@ const styles = StyleSheet.create({
     marginBottom:2,
     backgroundColor:'#ffffff',
     borderBottomLeftRadius:10,
+    borderTopRightRadius:0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius:0,
     borderWidth:1,
     borderColor: '#39b549',
   },
@@ -395,6 +410,9 @@ const styles = StyleSheet.create({
     borderEndColor:'green',
     backgroundColor:'#ffffff',
     borderTopRightRadius:10,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius:0,
     borderWidth:1,
     borderColor: '#39b549',
   },
@@ -404,6 +422,9 @@ const styles = StyleSheet.create({
     marginBottom:2,
     backgroundColor:'#ffffff',
     borderBottomRightRadius:10,
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius:0,
     borderWidth:1,
     borderColor: '#39b549',
   },

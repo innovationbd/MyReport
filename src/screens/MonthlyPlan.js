@@ -464,7 +464,10 @@ const sbbutton = () => {
         </View>
 
     <ScrollView 
-            style={{marginBottom: 10}}>
+            style={{marginBottom: 10}}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            >
           <View style={styles.row}>
           <Text style={styles.leftpart1}>Quran Study (Ayahs)</Text>
           <TextInput 
@@ -829,22 +832,17 @@ const styles = StyleSheet.create({
     height: 40,
     marginRight:mR,
     borderTopRightRadius:15,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius:15,
     textAlign: 'center'
-  },
+  }, 
   button3:{
-    flex:1,
-    marginBottom:5,
     height: 40,
-    width: 365,
+    width: 360,
     padding: 10,
     marginTop:10,
-  },
-  daily_fields:{
-    width:100,
-    height:40,
-    marginRight:80,
-    marginLeft:30,
-    padding:10,
+    marginRight:mR
   },
   leftpart:{
     flex:1,
@@ -866,14 +864,11 @@ const styles = StyleSheet.create({
     backgroundColor:'#0070bb',
     color:'white',
     fontWeight:'bold',
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     borderTopLeftRadius:15,
     textAlignVertical:'center'
-  },
-  checkbox: {
-    alignSelf: 'center',
-    backgroundColor:'white',
-    marginLeft:95,
-    marginRight: 90,
   },
   footer:{
     flex: 1,

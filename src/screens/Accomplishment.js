@@ -283,7 +283,10 @@ return (
       
       
       {s && p ? (
-        <ScrollView>
+        <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        >
         <View style={styles.row}>
         <Text style={styles.daily_fields} >Fields</Text>
         <Text style={styles.amounts}>   Plan | Accom</Text>
@@ -590,7 +593,6 @@ const styles = StyleSheet.create({
   },
   leftpart:{
     flex:2.6,
-    width:150,
     height:rowH,
     fontSize:10,
     marginRight:2,
@@ -604,7 +606,6 @@ const styles = StyleSheet.create({
   },
   leftpart1:{
     flex:2.6,
-    width:150,
     height:rowH,
     fontSize:10,
     marginRight:2,
@@ -614,6 +615,9 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     fontSize: 15,
     borderTopLeftRadius:15,
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     textAlignVertical:'center'
   },
   leftpart2:{
@@ -628,6 +632,9 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     fontSize: 15,
     borderBottomLeftRadius:15,
+    borderTopRightRadius:0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius:0,
     textAlignVertical:'center'
   },
   inner_amounts:{
@@ -663,6 +670,9 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     textAlign:'center',
     borderTopRightRadius:15,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius:0,
     textAlignVertical:'center',
     borderWidth:0
   },
@@ -676,6 +686,9 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     textAlign:'center',
     borderBottomRightRadius:15,
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius:0,
     textAlignVertical:'center',
     borderWidth:0
   },

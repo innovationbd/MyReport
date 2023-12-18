@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal, Alert } from 'react-native'
+import { StyleSheet, Text, View, Modal, Alert, FlatList } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import SelectDropdown from 'react-native-select-dropdown'
 import { Button } from 'react-native';
@@ -43,6 +43,7 @@ const Counselor = () => {
   const [data, setData] = useState([]);
   const [error,setError] = useState(null);
   const [fullData, setFullData] = useState("");
+  const [userInput,setUserInput] = useState("");
   useEffect(() => {
     storage.load({
       key: 'user',
@@ -183,13 +184,30 @@ const Counselor = () => {
     }
   };
 
-  const handleSearch = (query) =>{
-    setSearchQuery(query);
+  const filterData = (item) =>{
+
+    if(getName(item).toLowerCase().includes(userInput.toLowerCase())){
+      return (
+        
+                
+                    <View style={styles.counselor_name}>
+                      <Text style={styles.name_list}>{getName(item)}</Text>
+                      <Text style={styles.advices} onPress={() => {
+                        selectAdvices(item);
+                      }}>See Advices</Text>
+                    </View>
+                
+              
+      )
+    }
   }
 
 
   return (
-    <ScrollView>
+    <ScrollView
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    >
     <View style={styles.fullPart}>
       <View style={styles.upperPart}>
         <View style={styles.upperPartRow}>
@@ -215,32 +233,19 @@ const Counselor = () => {
           */}
           <Searchbar
                   placeholder="Search"
-                  onChangeText={(query) => handleSearch(query)}
-                  value={searchQuery}
-                  style={styles.counselorList}
-                  autoCapitalize='none'
-                  autoCorrect={false}
+                  onChangeText={(text) => setUserInput(text)}
+                  value={userInput}
+                  style={styles.counselorList}  
           />
         </View>
-        <ScrollView style={styles.upperPartList}>
-        { 
-            cunsellorUser ? (
-              cunsellorUser.map((item) => {
-                return (
-                    <View style={styles.counselor_name}>
-                      <Text style={styles.name_list}>{getName(item)}</Text>
-                      <Text style={styles.advices} onPress={() => {
-                        selectAdvices(item);
-                      }}>See Advices</Text>
-                    </View>
-                )
-              })
-            ) : (
-              <View style={styles.counselor_name}>
-                <Text style={styles.name_list}>Counsellor List Empty</Text>
-              </View>
-            )}
-        </ScrollView>
+        <ScrollView style={styles.upperPartList}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          >
+        <FlatList
+          data={cunsellorUser}
+          renderItem={({item, index}) => filterData(item)}
+        /></ScrollView>
 
       </View>
 
@@ -252,7 +257,10 @@ const Counselor = () => {
                       }}>See All Advices</Text>
         </View>
 
-        <ScrollView style={styles.lowerPartList}>
+        <ScrollView style={styles.lowerPartList}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        >
         { 
             currentAdvices ? (
               currentAdvices.map((item) => {
@@ -304,7 +312,7 @@ const Counselor = () => {
   )
 }
 
-export default Counselor
+export default Counselor;
 
 const styles = StyleSheet.create({
   fullPart:{

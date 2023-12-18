@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react';
-import { Button,StyleSheet,View,Text,ScrollView,Alert, Modal } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { Button,StyleSheet,View,Text,ScrollView,Alert, Modal, FlatList } from 'react-native';
+import { Searchbar, TextInput } from 'react-native-paper';
 import { LinearGradient } from "expo-linear-gradient";
 import ProgressBar from 'react-native-progress/Bar';
 import CheckBox from 'expo-checkbox';
@@ -11,7 +11,7 @@ import loading_line from "../../assets/loading_line.gif";
 import * as Animatable from "react-native-animatable";
 //import axios from "axios";
   
-const Syllabus = () => {
+const Syllabus = () => { 
   const [isSelected, setSelection] = useState(false);
   //const user = localStorage.getItem("user_id");
   const [user, setUser] = useState([]); 
@@ -28,6 +28,7 @@ const Syllabus = () => {
   const [processing, setProcessing] = useState(false);
   const [processingCount, setProcessingCount] = useState(0);
   const maxProcessingTime = 15; //if 15 second waiting time, then network problem
+  const [userInput,setUserInput] = useState("");
 
   const fetchBook = () => {
     API.getBooks(token)
@@ -173,8 +174,79 @@ const Syllabus = () => {
             });
   };
 
+  const filterData = (item) =>{
+    if(userInput === ""){
+      return (
+        <View style={styles.row}>
+        <Text style={styles.leftpart}>{item.id}</Text>
+        <Text style={styles.inner_amounts}>{item.bookName}</Text>
+        <View style={styles.checkbox}>
+          <CheckBox
+              style={styles.checkbox1}
+              disabled={false}
+              value={bookRead.length ? (bookRead.includes(item.id) ? true : false) : false}
+              onValueChange={(e) => bookRead.includes(item.id) ? setbookRead(bookRead.filter(b => b !== item.id)) : setbookRead(old => [...old, item.id])}
+          />
+        </View>
+        </View> 
+      )
+    }
+
+    if(item.bookName.toLowerCase().includes(userInput.toLowerCase())){
+      return (
+        <View style={styles.row}>
+        <Text style={styles.leftpart}>{item.id}</Text>
+        <Text style={styles.inner_amounts}>{item.bookName}</Text>
+        <View style={styles.checkbox}>
+          <CheckBox
+              style={styles.checkbox1}
+              disabled={false}
+              value={bookRead.length ? (bookRead.includes(item.id) ? true : false) : false}
+              onValueChange={(e) => bookRead.includes(item.id) ? setbookRead(bookRead.filter(b => b !== item.id)) : setbookRead(old => [...old, item.id])}
+          />
+        </View>
+        </View> 
+      )
+    }
+  }
+
   return (
     <>
+    <View style={styles.row_completed}>
+      <TextInput
+        placeholder="Search"
+        onChangeText={(text) => setUserInput(text)}
+        value={userInput}
+        style={styles.counselorList}        
+      />
+      <View style={styles.upper_amounts}>
+        <Text style={styles.amounts_u}>Total Completed</Text>
+        <View style={styles.progress_bar}>
+          <Text>{parseFloat(Progress).toFixed(2)} %</Text>
+          <ProgressBar progress={Progress/100} width={80} height={5} marginRight={35} variant={pbgcolor}/>
+        </View>
+      </View> 
+    </View>
+
+    <View style={styles.row_columnName}>
+      <Text style={styles.serial}>SL</Text>
+      <Text style={styles.amounts}>Book Name</Text>
+      <Text style={styles.amounts1}>Completed</Text>
+    </View>
+
+    <FlatList
+      data={book}
+      renderItem={({item, index}) => filterData(item)}
+    />
+
+    {/* 
+    <TextInput 
+    style={styles.search}
+    placeholder="Search"
+    onChangeText={(text) => setUserInput(text)}
+    />
+    */}
+      
     <ScrollView> 
       
       <LinearGradient
@@ -204,23 +276,11 @@ const Syllabus = () => {
         </View>
       </Modal> 
 
-      <View style={styles.row}>
-        <View style={styles.upper_amounts}>
-          <Text style={styles.amounts_u}>Total Completed</Text>
-          <View style={styles.progress_bar}>
-            <Text>{parseFloat(Progress).toFixed(2)} %</Text>
-            <ProgressBar progress={Progress/100} width={80} height={5} marginRight={35} variant={pbgcolor}/>
-          </View>
-        </View> 
-      </View>
-
-      <View style={styles.row}>
-      <Text style={styles.serial}>SL</Text>
-      <Text style={styles.amounts}>Book Name</Text>
-      <Text style={styles.amounts1}>Completed</Text>
-      </View>
       
 
+      
+      
+    {/* 
       { 
             book.length ? (
               book.map((item) => {
@@ -242,6 +302,8 @@ const Syllabus = () => {
             ) : (
               ''
             )}
+
+      */}
       
 
 
@@ -285,6 +347,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
 
+  },
+
+  row_columnName: {
+    marginTop:30,
+    marginBottom:20,
+    flex:1,
+    padding: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+
+  },
+
+  row_completed: {
+    padding: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  search:{
+    width:'80%',
+    alignSelf:'center',
+    marginTop:10,
+  },
+ 
+  counselorList:{
+    flex:1,
+    flexDirection:'column',
+    marginLeft:10,
   },
 
   centeredView: {
@@ -342,9 +434,9 @@ const styles = StyleSheet.create({
   },
   progress_bar:{
     marginBottom:10,
-    marginRight:20,
     alignItems:'center',
-    alignSelf:'center'
+    alignSelf:'center',
+    marginLeft:50,
   },
   amounts1:{
     flex:2,
@@ -418,9 +510,8 @@ const styles = StyleSheet.create({
     marginVertical: 24,
   },
   upper_amounts:{
-    flexDirection:'row',
-    alignItems:'flex-end',
-    marginLeft:190    
+    flex:1,
+    flexDirection:'column',
   }
   
 });

@@ -14,18 +14,19 @@ const Dashboard = (props) => {
   }
 
   return (
-    <ScrollView style={styles.root}>
+    <ScrollView style={styles.root}
+    showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+    >
     <SafeAreaView style={styles.container}>
       <Header/>
       <TouchableOpacity onPress={() => {
             this.PageDaily('DailyReport');
-         }}>
-      <View style={styles.box1}>
-         
+         }}
+         style={styles.box1}
+      >         
          <Icon name="clock" size={30} color='#5b97f1'/>
          <Text style={styles.text}>Daily Report</Text>
-         
-      </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => {
             this.PageDaily('MonthlySummary');
@@ -98,35 +99,14 @@ const Dashboard = (props) => {
 export default Dashboard;
   
 const styles = StyleSheet.create({
-  root:{flex:1},
-    container:{
-        backgroundColor:'#5b97f1'
-    },
-    box:{
-        width:200,
-        height:80,
-        marginTop:10,
-        marginRight:10,
-        marginLeft:2,
-        marginBottom:10,
-        padding:5,
-        backgroundColor:'white',
-        color:'blue',
-        fontWeight:'bold',
-        textAlignVertical:'center',
-        alignItems:'center',
-        alignSelf:'center',
-        textAlign:'center',
-        fontSize:20,
-        borderRadius:50
+  root:{
+   flex:1,
+   backgroundColor:'#5b97f1'
    },
     box1:{
-        width:'50%',
-        //height:80,
+      flex:0.25,
+        flexDirection:'row',
         marginTop:10,
-        marginRight:10,
-        marginLeft:2,
-        marginBottom:10,
         padding:10,
         backgroundColor:'white',
         fontWeight:'bold',
@@ -134,16 +114,20 @@ const styles = StyleSheet.create({
         alignItems:'center',
         alignSelf:'center',
         textAlign:'center',
-        fontSize:20,
         borderRadius:50,
    },
+   
     text:{
+      flex:0.5,
+      padding:10,
+      flexDirection:'row',
       color:'black',
       fontWeight:'bold',
       textAlignVertical:'center',
       alignItems:'center',
       alignSelf:'center',
       textAlign:'center',
+      fontSize:15,
       },
   
   

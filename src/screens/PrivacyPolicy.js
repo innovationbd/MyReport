@@ -41,7 +41,10 @@ const longText17 = "\t\t\t\t If you have any questions or suggestions about our 
 
 const PrivacyPolicy = () => {
   return (
-    <ScrollView style={styles.root}>
+    <ScrollView style={styles.root}
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    >
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

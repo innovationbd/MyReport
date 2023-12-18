@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View,TextInput, Alert, Modal, TouchableOpacity } from 'react-native'
+import { ScrollView, StyleSheet, Text, View,TextInput, Alert, Modal, TouchableOpacity, FlatList } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import SelectDropdown from 'react-native-select-dropdown'
 import { Button } from 'react-native';
@@ -69,6 +69,7 @@ const Reviewee = (props) => {
   const cY = moment(Date()).format('YYYY');  //currentYear
   const cM = moment(Date()).format('MM');  //currentMonth
   const cD = moment(Date()).format('DD');  //currentDateOnly
+  const [userInput,setUserInput] = useState("");
   
   const [itemsYear, setItemsYear] = useState([
     {label: Number(year)-1, value: Number(year)-1},
@@ -149,6 +150,12 @@ const Reviewee = (props) => {
     const rvwlist = alluser.length ? alluser.filter((item) => item.user == user)[0].reviewee : null;
     setReviweeData(rvwlist);
   };
+
+  useEffect(() => {
+    console.log(reviweeUser);
+  }, [reviweeUser]);
+
+  
 
   //to get full info of all reviewees
   const getReviewee = () => {
@@ -372,10 +379,28 @@ const Reviewee = (props) => {
           });
       
   } 
+  const filterData = (item) =>{
+
+    if(getName(item).toLowerCase().includes(userInput.toLowerCase())){
+      return (
+        <View style={styles.counselor_name}>
+          <Text style={styles.name_list}>{getName(item)}</Text>
+          <Text style={styles.advices} onPress={() => {
+            setReviewee(item);
+            selectAdvices(item);
+          }}>Select</Text>
+        </View> 
+    )
+    }
+  }
+
 
 
   return (
-    <ScrollView>
+    <ScrollView
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    >
 
       <Modal
         animationType="slide"
@@ -422,16 +447,30 @@ const Reviewee = (props) => {
             />
             */}
 
-            <Searchbar
-                  placeholder="Search"
-                  onChangeText={onChangeSearch}
-                  value={searchQuery}
-                  style={styles.counselorList}
-            />
+          <Searchbar
+            placeholder="Search"
+            onChangeText={(text) => setUserInput(text)}
+            value={userInput}
+            style={styles.counselorList}  
+          />
 
           </View>
-        </View>
-          <ScrollView style={styles.upperPartList}>
+          <ScrollView style={styles.upperPartList}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          >
+          <FlatList
+            data={reviweeUser}
+            renderItem={({item, index}) => filterData(item)}
+          /></ScrollView>
+          </View>
+
+        
+
+          {/*<ScrollView style={styles.upperPartList}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          >
             { 
             ruser ? (
               ruser.map((item) => {
@@ -450,7 +489,9 @@ const Reviewee = (props) => {
                 <Text style={styles.name_list}>Reviewee List Empty</Text>
               </View>
             )}
-          </ScrollView>
+            </ScrollView>*/}
+
+          
 
         
         
@@ -573,7 +614,10 @@ const Reviewee = (props) => {
          {/*} </View>
         </View>*/}
 
-        <ScrollView style={styles.middlepart}>
+        <ScrollView style={styles.middlepart}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        >
         { 
             currentAdvices ? (
               currentAdvices.map((item) => {
@@ -657,6 +701,8 @@ const styles = StyleSheet.create({
     borderColor:'#39b549',
     borderBottomLeftRadius:14,
     borderBottomRightRadius:14,
+    borderTopRightRadius:0,
+    borderTopLeftRadius:0,
     position:'relative'
   },
   modalContainer: {
@@ -786,6 +832,9 @@ const styles = StyleSheet.create({
     textAlign:'center',
     textAlignVertical:'center',
     borderTopLeftRadius:10,
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   counselor_name:{
     flex:1,

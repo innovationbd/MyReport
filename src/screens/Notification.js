@@ -78,7 +78,10 @@ const Notification = (props) => {
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    >
       <View style={styles.container}>
         <Text style={styles.notification}>Last Notifications</Text>
       </View>

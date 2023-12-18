@@ -457,7 +457,11 @@ const DailyReport = () => {
         maximumDate={new Date()}
       />
 
-      <ScrollView style={{marginBottom: 10}}>
+      <ScrollView style={styles.row_scroll}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      >
+      
 
       <View style={styles.row}>
       <Text style={styles.leftpart1}>Quran Study (Ayahs) {TP}</Text>
@@ -650,7 +654,7 @@ const DailyReport = () => {
           onValueChange={(e) => setSelfCriticism(Number(e))}
       /></View>
       </View>
-
+      
       <TextInput 
         placeholder='Comment(Optional)'
         style={styles.button3}
@@ -658,12 +662,16 @@ const DailyReport = () => {
         value={comment}
       />
 
-      <View style={styles.footer}>
-              <View style={styles.save_share} >
-                <Text style={styles.save_share_text} onPress={sbbutton}>{reportid == 0 ? "ADD REPORT" : "UPDATE REPORT"}</Text>
-              </View> 
-      </View>
+      
       </ScrollView>
+
+      
+
+      <Button
+            title={reportid == 0 ? "ADD REPORT" : "UPDATE REPORT"}
+            color="#0070bb"
+            onPress={sbbutton}
+      />
 
 
       
@@ -678,7 +686,6 @@ const DailyReport = () => {
 export default DailyReport;
   
 const styles = StyleSheet.create({
-  root:{flex:1},
   column: {
     flex:1,
     padding: 10,
@@ -695,10 +702,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
 
   },
+  row_scroll: {
+    flex:7,
+    
+
+  },
 
   rowMonthYear: {
-    flex:1,
-    padding: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
@@ -737,17 +747,20 @@ const styles = StyleSheet.create({
   },
   
   button:{
-    flex: 0.67,
+    flex: 1,
+    flexDirection:'column',
     height: 40,
     textAlign: 'center'
   },
   button_lecture:{
-    flex: 0.28,
+    flex: 0.5,
+    flexDirection:'column',
     height: 40,
     textAlign: 'right'
   },
   button_lecture2:{
-    flex: 0.32,
+    flex: 0.4,
+    flexDirection:'column',
     height: 40,
   },
   colon_time:{
@@ -758,7 +771,8 @@ const styles = StyleSheet.create({
     paddingTop: 10
   },
   button1:{
-    flex: 0.67,
+    flex: 1,
+    flexDirection:'column',
     height: 40,
     borderTopRightRadius:15,
     borderBottomLeftRadius: 0,
@@ -767,26 +781,17 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   button3:{
-    flex:1,
     marginBottom:1,
-    height: 40,
-    width: 365,
+    height: 40, 
+    width:365,
     padding: 10,
     marginTop:5
   },
-  daily_fields:{
-    width:'50%',
-    height:40,
-    marginRight:80,
-    marginLeft:30,
-    padding:10,
-  },
   leftpart:{
     flex:1,
-    width:'50%',
+    flexDirection:'column',
     height:40,
     marginRight:10,
-    marginLeft:2,
     padding:10,
     backgroundColor:'#0070bb',
     color:'white',
@@ -795,14 +800,17 @@ const styles = StyleSheet.create({
   },
   leftpart1:{
     flex:1,
+    flexDirection:'column',
     height:40,
     marginRight:10,
-    marginLeft:2,
     padding:10,
     backgroundColor:'#0070bb',
     color:'white',
     fontWeight:'bold',
     fontSize: 15,
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     borderTopLeftRadius:15,
   },
   checkbox: {
@@ -814,7 +822,6 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   textdate:{
-    width:'40%',
     height:50,
     padding:10,
     backgroundColor:'white',

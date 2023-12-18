@@ -443,7 +443,10 @@ const MonthlySummary = () => {
 
     
     
-    <ScrollView>
+    <ScrollView
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+    >
     
     <Text style={{textAlign:'center', fontSize: 15, fontWeight:'bold'}}>Report Kept: {reportdays ? reportdays : 0} Days </Text>
       <View style={styles.row}>
@@ -598,7 +601,7 @@ const MonthlySummary = () => {
         value={monthlyComment}
       />
   
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <View style={styles.save_share} >
           <Text style={styles.save_share_text} onPress={sbbutton}>SAVE</Text>
         </View> 
@@ -606,9 +609,17 @@ const MonthlySummary = () => {
         {/*<View style={styles.save_share1}>
           <Text style={styles.save_share_text}>SHARE</Text>
   </View> */}
+  {/*
       </View>
+    */}
 
       </ScrollView>
+
+      <Button
+            title="SAVE"
+            color="#0070bb"
+            onPress={sbbutton}
+      />
       
     </LinearGradient>
   
@@ -726,6 +737,9 @@ const styles = StyleSheet.create({
     color:'white',
     fontWeight:'bold',
     fontSize: 15,
+    borderTopRightRadius:0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     borderTopLeftRadius:15,
     textAlignVertical:'center'
   },
@@ -755,6 +769,9 @@ const styles = StyleSheet.create({
     backgroundColor:'white',
     textAlign:'center',
     borderTopRightRadius:15,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius:0,
     textAlignVertical:'center'
   },
   inner_amounts2:{
