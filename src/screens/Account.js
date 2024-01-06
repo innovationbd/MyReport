@@ -11,7 +11,6 @@ import loading_line from "../../assets/loading_line.gif";
 import * as Animatable from "react-native-animatable";
 
 
-
 const Account = () => {
 
   const [status, setStatus] = useState(undefined); // For message
